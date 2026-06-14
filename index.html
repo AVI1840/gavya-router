@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מנתב הגבייה v2 - דמו</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; background: #f0f4f8; color: #1a365d; line-height: 1.6; padding: 20px; }
+        .container { max-width: 850px; margin: 0 auto; }
+        .header { background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%); color: white; padding: 24px; border-radius: 12px; margin-bottom: 20px; text-align: center; }
+        .header h1 { font-size: 26px; margin-bottom: 6px; }
+        .header p { opacity: 0.8; font-size: 13px; }
+        .nav { background: white; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .nav h2 { margin-bottom: 14px; color: #2c5282; font-size: 18px; }
+        .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .nav-btn { padding: 14px 16px; background: #ebf8ff; border: 2px solid #bee3f8; border-radius: 8px; cursor: pointer; text-align: right; transition: all 0.2s; color: #1a365d; font-size: 14px; }
+        .nav-btn:hover { background: #bee3f8; border-color: #63b3ed; transform: translateY(-1px); }
+        .nav-btn strong { display: block; font-size: 15px; margin-bottom: 4px; }
+        .nav-btn small { color: #4a5568; font-size: 12px; }
+        .card { background: white; border-radius: 12px; padding: 24px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); display: none; }
+        .card.active { display: block; }
+        .card h3 { color: #2c5282; margin-bottom: 14px; font-size: 17px; border-bottom: 2px solid #ebf8ff; padding-bottom: 8px; }
+        .q { background: #f7fafc; border-radius: 8px; padding: 14px; margin-bottom: 10px; }
+        .q label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; }
+        .opts { display: flex; flex-wrap: wrap; gap: 6px; }
+        .opt { padding: 8px 14px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; font-size: 13px; transition: all 0.15s; color: #1a365d; }
+        .opt:hover { border-color: #63b3ed; background: #ebf8ff; }
+        .opt.sel { border-color: #2c5282; background: #2c5282; color: white; }
+        .res { border-radius: 10px; padding: 20px; margin-top: 14px; }
+        .res-ok { background: #f0fff4; border: 2px solid #68d391; }
+        .res-no { background: #fff5f5; border: 2px solid #fc8181; }
+        .res-warn { background: #fffff0; border: 2px solid #ecc94b; }
+        .res-info { background: #ebf8ff; border: 2px solid #63b3ed; }
+        .res h4 { font-size: 16px; margin-bottom: 10px; }
+        .res-ok h4 { color: #276749; }
+        .res-no h4 { color: #c53030; }
+        .res-warn h4 { color: #975a16; }
+        .res-info h4 { color: #2c5282; }
+        .step { padding: 6px 10px; margin-bottom: 4px; background: rgba(255,255,255,0.6); border-radius: 4px; font-size: 13px; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; }
+        .b-scr { background: #ebf8ff; color: #2c5282; }
+        .b-form { background: #fefcbf; color: #975a16; }
+        .b-warn { background: #fed7d7; color: #c53030; }
+        .b-ok { background: #c6f6d5; color: #276749; }
+        .back-btn { display: inline-block; margin-top: 14px; padding: 8px 16px; background: #e2e8f0; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; color: #1a365d; }
+        .back-btn:hover { background: #cbd5e0; }
+        .footer { text-align: center; padding: 16px; color: #a0aec0; font-size: 11px; }
+        .source { font-size: 11px; color: #718096; margin-top: 8px; font-style: italic; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>מנתב הגבייה</h1>
+        <p>כלי ניתוב פעולות לפקידי ביטוח וגבייה | דמו אינטראקטיבי v2</p>
+        <p style="margin-top:4px;font-size:11px;opacity:0.6">מבוסס על חוזרי ביטוח 1207, 1406, 1504, ועדת סינון 2018, הוראות ספורטאים 2022</p>
+    </div>
+
+    <!-- NAV -->
+    <div class="nav" id="main-nav">
+        <h2>בחר תרחיש:</h2>
+        <div class="nav-grid">
+            <button class="nav-btn" onclick="show('screening')"><strong>ועדת סינון</strong><small>האם להפנות לוועדה/חקירה? (לפי גמלה)</small></button>
+            <button class="nav-btn" onclick="show('cancel')"><strong>ביטול מעמד</strong><small>חוזר 1406 - שינוי מעמד בעקבות תביעה/חקירה</small></button>
+            <button class="nav-btn" onclick="show('household')"><strong>משק בית</strong><small>חוזר 1504 - פתיחה, שליפות, סינון</small></button>
+            <button class="nav-btn" onclick="show('athletes')"><strong>ספורטאים</strong><small>כדורגל/כדורסל - מי מאשר?</small></button>
+            <button class="nav-btn" onclick="show('reverse')"><strong>ביטול של ביטול</strong><small>4 שלבי תיקון ידניים (1406)</small></button>
+            <button class="nav-btn" onclick="show('foreign')"><strong>עובדים זרים</strong><small>מסגרת ביטוח + תנאי זכאות</small></button>
+        </div>
+    </div>
+
+    <!-- SCREENING -->
+    <div class="card" id="screening">
+        <h3>ועדת סינון - האם להפנות?</h3>
+        <div class="q"><label>סוג הגמלה:</label><div class="opts">
+            <button class="opt" onclick="scr('benefit','maternity')">דמי לידה (אימהות)</button>
+            <button class="opt" onclick="scr('benefit','unemployment')">דמי אבטלה</button>
+            <button class="opt" onclick="scr('benefit','elderly')">אזרח ותיק</button>
+            <button class="opt" onclick="scr('benefit','injury')">דמי פגיעה בעבודה</button>
+        </div></div>
+        <div class="q" id="scr-relation" style="display:none"><label>קרבה משפחתית / בעל שליטה?</label><div class="opts">
+            <button class="opt" onclick="scr('relation','family')">קרוב משפחה</button>
+            <button class="opt" onclick="scr('relation','spouse')">בן/בת זוג</button>
+            <button class="opt" onclick="scr('relation','owner')">בעל מניות/שליטה</button>
+            <button class="opt" onclick="scr('relation','none')">אין קרבה</button>
+        </div></div>
+        <div class="q" id="scr-period" style="display:none"><label>תקופת העבודה:</label><div class="opts">
+            <button class="opt" onclick="scr('period','short')">פחות מ-18 חודשים</button>
+            <button class="opt" onclick="scr('period','mid')">18-36 חודשים</button>
+            <button class="opt" onclick="scr('period','long')">מעל 36 חודשים</button>
+        </div></div>
+        <div class="q" id="scr-salary" style="display:none"><label>גובה השכר:</label><div class="opts">
+            <button class="opt" onclick="scr('salary','min')">עד שכר מינימום</button>
+            <button class="opt" onclick="scr('salary','above')">מעל שכר מינימום</button>
+        </div></div>
+        <div class="q" id="scr-raise" style="display:none"><label>עליה בשכר בחודשי הבסיס:</label><div class="opts">
+            <button class="opt" onclick="scr('raise','none')">ללא עליה / עד 25%</button>
+            <button class="opt" onclick="scr('raise','mid')">25%-50%</button>
+            <button class="opt" onclick="scr('raise','high')">מעל 50%</button>
+        </div></div>
+        <div id="scr-result"></div>
+    </div>
+
+    <!-- CANCEL (1406) -->
+    <div class="card" id="cancel">
+        <h3>ביטול יחסי עובד-מעביד (חוזר 1406)</h3>
+        <div class="q"><label>עילת הבדיקה:</label><div class="opts">
+            <button class="opt" onclick="canc('reason','claim')">תביעה לגמלה</button>
+            <button class="opt" onclick="canc('reason','police')">חקירה משטרתית</button>
+        </div></div>
+        <div class="q" id="c-nimuk" style="display:none"><label>נימוק:</label><div class="opts">
+            <button class="opt" onclick="canc('nimuk','1')">1 - עזרה משפחתית / לא ריאלי</button>
+            <button class="opt" onclick="canc('nimuk','2')">2 - לא הוכח שבוצעה עבודה</button>
+            <button class="opt" onclick="canc('nimuk','3')">3 - עצמאי ולא שכיר</button>
+        </div></div>
+        <div class="q" id="c-control" style="display:none"><label>האם בעל שליטה?</label><div class="opts">
+            <button class="opt" onclick="canc('control','yes')">כן</button>
+            <button class="opt" onclick="canc('control','no')">לא</button>
+        </div></div>
+        <div class="q" id="c-single" style="display:none"><label>עובד יחיד בעסק?</label><div class="opts">
+            <button class="opt" onclick="canc('single','yes')">כן</button>
+            <button class="opt" onclick="canc('single','no')">לא</button>
+        </div></div>
+        <div id="c-result"></div>
+    </div>
+
+    <!-- HOUSEHOLD (1504) -->
+    <div class="card" id="household">
+        <h3>משק בית - חוזר 1504 (2024)</h3>
+        <div class="q"><label>מה הפעולה?</label><div class="opts">
+            <button class="opt" onclick="hh('action','open')">פתיחת תיק מעסיק</button>
+            <button class="opt" onclick="hh('action','check')">בדיקה בעקבות תביעה לגמלה</button>
+            <button class="opt" onclick="hh('action','proactive')">שליפה יזומה</button>
+        </div></div>
+        <div class="q" id="hh-salary" style="display:none"><label>גובה השכר החודשי:</label><div class="opts">
+            <button class="opt" onclick="hh('salary','under200')">מתחת ל-200₪</button>
+            <button class="opt" onclick="hh('salary','200to1000')">200-1,000₪</button>
+            <button class="opt" onclick="hh('salary','over1000')">מעל 1,000₪</button>
+        </div></div>
+        <div class="q" id="hh-period" style="display:none"><label>תקופת דיווח:</label><div class="opts">
+            <button class="opt" onclick="hh('period','short')">פחות מ-18 חודשים</button>
+            <button class="opt" onclick="hh('period','mid')">18-36 חודשים</button>
+            <button class="opt" onclick="hh('period','long')">מעל 36 חודשים</button>
+        </div></div>
+        <div class="q" id="hh-type" style="display:none"><label>סוג התביעה:</label><div class="opts">
+            <button class="opt" onclick="hh('type','injury')">פגיעה בעבודה</button>
+            <button class="opt" onclick="hh('type','other')">גמלה אחרת (לידה, אבטלה, אזרח ותיק)</button>
+        </div></div>
+        <div id="hh-result"></div>
+    </div>
+
+    <!-- ATHLETES -->
+    <div class="card" id="athletes">
+        <h3>ספורטאים - הוראות 2022</h3>
+        <div class="q"><label>ענף הספורט:</label><div class="opts">
+            <button class="opt" onclick="ath('sport','football')">כדורגל</button>
+            <button class="opt" onclick="ath('sport','basketball')">כדורסל</button>
+            <button class="opt" onclick="ath('sport','other')">ענף אחר</button>
+        </div></div>
+        <div class="q" id="ath-month" style="display:none"><label>חודש הפגיעה:</label><div class="opts">
+            <button class="opt" onclick="ath('month','season')">ספטמבר-מאי (עונה)</button>
+            <button class="opt" onclick="ath('month','break')">יוני-יולי (פגרה)</button>
+            <button class="opt" onclick="ath('month','aug')">אוגוסט (אימון)</button>
+        </div></div>
+        <div class="q" id="ath-salary" style="display:none"><label>שכר ברוטו:</label><div class="opts">
+            <button class="opt" onclick="ath('salary','above')">מעל 1,500₪</button>
+            <button class="opt" onclick="ath('salary','below')">מתחת ל-1,500₪</button>
+        </div></div>
+        <div id="ath-result"></div>
+    </div>
+
+    <!-- REVERSE -->
+    <div class="card" id="reverse">
+        <h3>ביטול של ביטול - 4 שלבים ידניים</h3>
+        <div class="res res-info" style="display:block">
+            <h4>אין אפשרות אוטומטית! בצע ידנית:</h4>
+            <div class="step"><strong>שלב 1:</strong> <span class="badge b-scr">מסך 163 בגל"ש</span> → היכנס לרשומות (תקופת בדיקה + תקופה עתידית) → בטל ב-<span class="badge b-form">F11</span></div>
+            <div class="step"><strong>שלב 2:</strong> פנה ל<span class="badge b-warn">מוקד רציפות ביטוח</span> → בקש עדכון עיסוק ממקור 126 שבוטל</div>
+            <div class="step"><strong>שלב 3:</strong> <span class="badge b-scr">מערכת "עסק"</span> → קלוט מחדש דוחות 102 (מקוד 88 → קוד מקורי) + הוסף עובד בגב הטופס</div>
+            <div class="step"><strong>שלב 4:</strong> <span class="badge b-scr">מסך 124 (עסק)</span> + <span class="badge b-scr">מסך 120 (גל"ש)</span> → הערה עם סיבת הביטול</div>
+            <div class="step" style="background:#fff5f5;margin-top:8px"><strong>⚠️ אזהרה:</strong> אין לשלוח בקשות ביטול תקופת העסקה ממקור 126 למחלקת רציפות ביטוח - הביטול מתבצע אוטומטית עם הזמנת קבמע.</div>
+            <p class="source">מקור: חוזר 1406, עמוד 5 - "אופן ביטול של ביטול העיסוק כשכיר"</p>
+        </div>
+        <button class="back-btn" onclick="goHome()">חזרה</button>
+    </div>
+
+    <!-- FOREIGN -->
+    <div class="card" id="foreign">
+        <h3>עובדים זרים / תושבי שטחים</h3>
+        <div class="res res-info" style="display:block">
+            <h4>עקרונות מנחים (חוזר נפ"ע 2012):</h4>
+            <div class="step"><strong>קביעת מעמד:</strong> בסמכות תחום הביטוח שבגבייה</div>
+            <div class="step"><strong>לא המציא פרטי מעסיק:</strong> התביעה נדחית ("המוציא מחברו עליו הראיה")</div>
+            <div class="step"><strong>חובת חקירה:</strong> תקופת עבודה קצרה (2-3 חודשים)</div>
+            <div class="step"><strong>ענף בנייה:</strong> קבלן ראשי = מעסיק (תקנות קבלנים)</div>
+            <div class="step"><strong>שהות לא כדין:</strong> גמלה נשללת אחרי 30 יום מפקיעת אשרה</div>
+            <div class="step"><strong>חריג - מענק נכות:</strong> משולם ללא בדיקת שהות</div>
+            <div class="step"><strong>חריג - טיפול רפואי:</strong> תמיד, גם ללא שהות כדין</div>
+            <div class="step" style="margin-top:8px;background:#ebf8ff"><strong>תושב שטחים בדרך לעבודה:</strong> מבוטח רק אם מתגורר בישראל/ישובים + תאונה בשטח C (לא באוטונומיה)</div>
+            <p class="source">מקור: חוזר נפגעי עבודה 25/2012 - "הנחיות לטיפול בתביעות תושבי שטחים/עובדים זרים"</p>
+        </div>
+        <button class="back-btn" onclick="goHome()">חזרה</button>
+    </div>
+
+    <div class="footer">מנתב הגבייה v2.0 | Scale4U Pilot | צוות חדשנות ותשתית | יוני 2026<br><strong>הכלי מנחה בלבד - הפקיד מקבל את ההחלטה</strong></div>
+</div>
+
+<script>
+let ans = {};
+function show(id) { document.getElementById('main-nav').style.display='none'; document.getElementById(id).classList.add('active'); ans={}; }
+function goHome() { document.querySelectorAll('.card').forEach(c=>c.classList.remove('active')); document.getElementById('main-nav').style.display='block'; ans={}; resetAllQ(); }
+function resetAllQ() { document.querySelectorAll('.q[id]').forEach(q=>{if(!q.querySelector('.opts .opt:first-child'))return; if(q.id.includes('-')&&q.id!=='scr-relation'||(q.id.startsWith('scr-')&&q.id!=='scr-relation'))q.style.display='none';}); document.querySelectorAll('[id$="-result"]').forEach(r=>r.innerHTML=''); document.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel')); }
+function sel(e){e.target.parentElement.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));e.target.classList.add('sel');}
+
+// SCREENING
+function scr(q,v){ans[q]=v;event&&sel(event);
+if(q==='benefit'){document.getElementById('scr-relation').style.display='block';}
+if(q==='relation'){
+  if(v==='spouse'&&ans.benefit==='unemployment'){showScrResult('no','⛔ חקירת חוץ חובה!','העסקה בין בני זוג בתביעת אבטלה - חלה חובה להעביר לחקירות חוץ ללא הגבלה של תקופת דיווח.','ועדת סינון 2018, סעיף "העסקה בין בני זוג"');return;}
+  if(v==='none'&&ans.benefit==='injury'){document.getElementById('scr-period').style.display='block';}
+  else{document.getElementById('scr-period').style.display='block';}
+}
+if(q==='period'){
+  if(ans.benefit==='elderly'&&ans.relation!=='none'){
+    if(v==='long'){showScrResult('ok','✅ פקיד מאשר - ללא חקירה','תקופה של 12 שנים ומעלה, או 6+ שנים ב-10 שנים לפני פרישה.','ועדת סינון 2018 - אזרח ותיק');return;}
+    if(v==='short'){showScrResult('warn','⚠️ ועדת סינון','תקופה הקצרה מ-6 שנים סמוך לפרישה.','ועדת סינון 2018 - אזרח ותיק');return;}
+  }
+  if(v==='long'&&ans.relation!=='none'){document.getElementById('scr-raise').style.display='block';}
+  else if(v==='short'){showScrResult('warn','⚠️ טופס בל/674 + ועדת סינון','תקופת עבודה קצרה מ-18 חודשים → באחריות פקיד גמלאות לפנות למילוי טופס בל/674 ולהעביר לוועדת סינון.','ועדת סינון 2018');return;}
+  else{document.getElementById('scr-salary').style.display='block';}
+}
+if(q==='salary'){
+  if(v==='min'&&ans.period==='mid'){showScrResult('ok','✅ פקיד תביעות מאשר','תקופה 18-36 חודשים + שכר עד מינימום + הוכחות הפקדה 10 חודשים אחרונים → סמכות פקיד תביעות.','ועדת סינון 2018');return;}
+  if(v==='above'){showScrResult('warn','⚠️ טופס בל/674 + ועדת סינון','שכר מעל מינימום + תקופה 18-36 → מילוי טופס והעברה לוועדה.','ועדת סינון 2018');return;}
+  showScrResult('warn','⚠️ ועדת סינון','יש להעביר לוועדת סינון בסניף.','ועדת סינון 2018');
+}
+if(q==='raise'){
+  if(v==='none'){showScrResult('ok','✅ לשלם ללא הסבר','תקופה 36+ חודשים + עליה עד 25-30% → פקיד תביעות מאשר.','ועדת סינון 2018');}
+  else if(v==='mid'){showScrResult('warn','⚠️ הסבר + הוכחות','עליה 25-50% → לקבל הסבר והוכחות. אם לא משכנע → ועדת סינון.','ועדת סינון 2018');}
+  else{showScrResult('warn','⚠️ טופס בל/674 + ועדת סינון','עליה מעל 50% → מילוי טופס + העברה לוועדת סינון.','ועדת סינון 2018');}
+}}
+function showScrResult(type,title,text,source){
+  let cls={'ok':'res-ok','no':'res-no','warn':'res-warn'}[type]||'res-info';
+  document.getElementById('scr-result').innerHTML=`<div class="res ${cls}" style="display:block"><h4>${title}</h4><div class="step">${text}</div><p class="source">מקור: ${source}</p></div><button class="back-btn" onclick="goHome()">חזרה</button>`;
+}
+
+// CANCEL (1406)
+function canc(q,v){ans[q]=v;event&&sel(event);
+if(q==='reason'){document.getElementById('c-nimuk').style.display='block';}
+if(q==='nimuk'){if(v==='3'){document.getElementById('c-control').style.display='block';}else{document.getElementById('c-single').style.display='block';}}
+if(q==='control'){if(v==='yes'){document.getElementById('c-result').innerHTML=`<div class="res res-no" style="display:block"><h4>⛔ עצור! אין לשנות מעמד</h4><div class="step"><strong>סיבה:</strong> מעמדו של בעל השליטה זהה לזה של העצמאי מבחינת זכאות לגמלה. אין לשנות את המעמד.</div><div class="step"><strong>פעולה:</strong> אם יש ממצאים לאי-הכרה → בחר נימוק 1 או 2.</div><p class="source">מקור: חוזר 1406, עמוד 4</p></div><button class="back-btn" onclick="goHome()">חזרה</button>`;return;}document.getElementById('c-single').style.display='block';}
+if(q==='single'){showCancelResult();}
+}
+function showCancelResult(){
+  let reason=ans.reason==='claim'?'תביעה לגמלה':'חקירה משטרתית';
+  let nimuk={'1':'עזרה משפחתית/לא ריאלי','2':'לא הוכח שבוצעה עבודה','3':'עצמאי ולא שכיר'}[ans.nimuk];
+  let close=ans.single==='yes'?`<div class="step" style="background:#fff5f5"><strong>סגירת תיק:</strong> עובד יחיד → סגור פעילות. סוג: ${ans.nimuk==='3'?'"לא פעיל-עצמאי" (לע)':'"לא פעיל-אוטומטי"'}</div>`:'';
+  let n3=ans.nimuk==='3'?'<div class="step" style="background:#fffff0"><strong>שים לב (נימוק 3):</strong> במערכת "מבוטח" לא תבוטל תקופת העבודה. קוד דיווח ישתנה ל-88 בלבד. פרטי העובד ושכרו ללא שינוי.</div><div class="step"><strong>פתיחת תיק עצמאי:</strong> העבר לגל"ש בקשה לפתיחת תיק מהחודש העוקב.</div>':'';
+  document.getElementById('c-result').innerHTML=`<div class="res res-ok" style="display:block"><h4>✅ הנחיות ביצוע:</h4><div class="step"><strong>כניסה:</strong> <span class="badge b-scr">מסך 614</span> → F1 → <span class="badge b-form">קביעת מעמד (קבמע)</span></div><div class="step"><strong>עילה:</strong> ${reason} → סמן "כ"</div><div class="step"><strong>נימוק:</strong> ${nimuk}</div><div class="step"><strong>התקיימו יחסי עו"מ:</strong> שנה ל-"ל" (לא התקיימו)</div>${close}${n3}<div class="step"><strong>סיום:</strong> F3 (נימוקים מפורטים) → F12 (עדכון)</div><div class="step" style="background:#f0f4ff;margin-top:8px"><strong>🕐 מנת לילה תבצע:</strong> הודעה למעסיק (611) + למבוטח (311) + ${ans.nimuk!=='3'?'ביטול דוחות 102 → קוד 88 + ביטול תקופות + ביטול 126':'שינוי קוד ל-88 בלבד'} + חסימה במסך 163</div><p class="source">מקור: חוזר 1406</p></div><button class="back-btn" onclick="goHome()">חזרה</button>`;
+}
+
+// HOUSEHOLD (1504)
+function hh(q,v){ans[q]=v;event&&sel(event);
+if(q==='action'){
+  if(v==='open'){document.getElementById('hh-salary').style.display='block';}
+  if(v==='check'){document.getElementById('hh-period').style.display='block';}
+  if(v==='proactive'){document.getElementById('hh-result').innerHTML=`<div class="res res-info" style="display:block"><h4>שליפות יזומות (אחת לשנה):</h4><div class="step"><strong>סוג 1 - חובת תשלום:</strong> שכר עד 1,000₪ + דיווח רצוף 6 חודשים. אוכלוסייה: מי שחלה עליו חובת תשלום ד"ב לפי מינימום. לא כולל: פטורים, מקבלי גמלאות, נשים נשואות.</div><div class="step"><strong>סוג 2 - אזרח ותיק:</strong> נשים מעל 57. שכר עד 1,000₪. דיווח שיוצר זכאות לגמלה.</div><p class="source">מקור: חוזר 1504 (מרץ 2024)</p></div><button class="back-btn" onclick="goHome()">חזרה</button>`;}
+}
+if(q==='salary'){
+  if(v==='under200'){document.getElementById('hh-result').innerHTML=`<div class="res res-no" style="display:block"><h4>⛔ לא תאושר פתיחה אוטומטית</h4><div class="step">שכר מתחת להכנסה המינימלית (200₪) → המעסיק יופנה להמשך בירור מול הסניף.</div><p class="source">חוזר 1504 - "חריג"</p></div><button class="back-btn" onclick="goHome()">חזרה</button>`;return;}
+  document.getElementById('hh-result').innerHTML=`<div class="res res-ok" style="display:block"><h4>✅ תיק נפתח אוטומטית</h4><div class="step">שכר מעל 200₪ → פתיחה ללא בדיקה מראש.</div><div class="step"><strong>הודעה למעסיק:</strong> "המידע נקלט בשלב זה ואין בכך לאשר הכרה במעמד. מעת לעת נערכות בדיקות מדגמיות. דיווח כוזב יבוטל רטרואקטיבית."</div><p class="source">חוזר 1504</p></div><button class="back-btn" onclick="goHome()">חזרה</button>`;
+}
+if(q==='period'){document.getElementById('hh-type').style.display='block';}
+if(q==='type'){
+  if(v==='injury'){document.getElementById('hh-result').innerHTML=`<div class="res res-no" style="display:block"><h4>⚠️ בדיקה מלאה - ללא סינון!</h4><div class="step"><strong>חריג:</strong> כל תביעות פגיעה בעבודה ייבדקו ללא סינון וללא הבחנה לגבי אורך תקופת הדיווח.</div><div class="step">יש לוודא שלא נעשתה מניפולציה להגדלת בסיס הגמלה.</div><p class="source">חוזר 1504 - "חריג"</p></div><button class="back-btn" onclick="goHome()">חזרה</button>`;return;}
+  if(ans.period==='long'){document.getElementById('hh-result').innerHTML=`<div class="res res-ok" style="display:block"><h4>✅ לא נבדק</h4><div class="step">דיווח מעל 36 חודשים → כלל לא ייבדק, אלא אם יעלה חשד.</div><p class="source">חוזר 1504</p></div><button class="back-btn" onclick="goHome()">חזרה</button>`;return;}
+  if(ans.period==='mid'){document.getElementById('hh-result').innerHTML=`<div class="res res-warn" style="display:block"><h4>⚠️ ועדת סינון בסניף</h4><div class="step">דיווח 18-36 חודשים → ייבחן במסגרת ועדת סינון. בסמכותם לאשר או להעמיק בירור.</div><p class="source">חוזר 1504</p></div><button class="back-btn" onclick="goHome()">חזרה</button>`;return;}
+  document.getElementById('hh-result').innerHTML=`<div class="res res-warn" style="display:block"><h4>⚠️ בחינת מעמד מלאה</h4><div class="step">דיווח פחות מ-18 חודשים + תביעה לגמלה → העבר לפקיד ביטוח לבדיקה.</div><p class="source">חוזר 1504</p></div><button class="back-btn" onclick="goHome()">חזרה</button>`;
+}}
+
+// ATHLETES
+function ath(q,v){ans[q]=v;event&&sel(event);
+if(q==='sport'){
+  if(v==='other'){document.getElementById('ath-result').innerHTML=`<div class="res res-warn" style="display:block"><h4>→ העברה לפקיד ביטוח וגביה</h4><div class="step">ענף שאינו כדורגל/כדורסל → בחינת מעמד ע"י פקיד ביטוח כרגיל.</div><p class="source">הוראות ספורטאים 2022</p></div><button class="back-btn" onclick="goHome()">חזרה</button>`;return;}
+  document.getElementById('ath-month').style.display='block';
+}
+if(q==='month'){
+  if(v!=='season'){document.getElementById('ath-result').innerHTML=`<div class="res res-warn" style="display:block"><h4>→ העברה לפקיד ביטוח וגביה</h4><div class="step">פגיעה בחודשי ${v==='break'?'פגרה (יוני-יולי)':'אימון (אוגוסט)'} → מועבר לקביעת מעמד ובסיס.</div><p class="source">הוראות ספורטאים 2022</p></div><button class="back-btn" onclick="goHome()">חזרה</button>`;return;}
+  document.getElementById('ath-salary').style.display='block';
+}
+if(q==='salary'){
+  if(v==='below'){document.getElementById('ath-result').innerHTML=`<div class="res res-warn" style="display:block"><h4>→ העברה לפקיד ביטוח וגביה</h4><div class="step">שכר מתחת ל-1,500₪ ברוטו → מועבר לבחינה.</div><p class="source">הוראות ספורטאים 2022</p></div><button class="back-btn" onclick="goHome()">חזרה</button>`;return;}
+  document.getElementById('ath-result').innerHTML=`<div class="res res-ok" style="display:block"><h4>✅ פקיד תביעות מאשר</h4><div class="step">כדורגל/כדורסל + פגיעה במהלך עונה + שכר מעל 1,500₪ → <strong>פקיד תביעות מאשר ללא התייעצות עם ביטוח/גביה.</strong></div><div class="step">נדרש: תלושי שכר או אישור מעסיק בטופס התביעה. אין צורך בהסכם/חוזה עבודה.</div><p class="source">הוראות ספורטאים 2022 - "תביעות שיטופלו ע"י פקיד התביעות"</p></div><button class="back-btn" onclick="goHome()">חזרה</button>`;
+}}
+</script>
+</body>
+</html>
