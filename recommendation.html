@@ -99,6 +99,23 @@ body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;background:#f0f4f8;color:#1a
 <h3 style="margin:16px 0 10px;font-size:15px;color:#2c5282">ממצאי מבחנים משפטיים:</h3>
 <div id="tests-container"></div>
 
+
+<h3 style="margin:16px 0 10px;font-size:15px;color:#2c5282">שאלות מנחות נוספות (בל/674):</h3>
+<div class="test-section">
+<div class="test-header" onclick="this.nextElementSibling.classList.toggle('open')">שאלון בל/674 - שאלות מנחות לבדיקת יחסי עו"מ <span style="font-size:12px;color:#718096">[לחץ לפתיחה]</span></div>
+<div class="test-body">
+<div class="sub-q"><label>האם קיים חוזה העסקה?</label><select id="q674-contract"><option value="">לא נבדק</option><option value="yes">כן</option><option value="no">לא</option></select></div>
+<div class="sub-q"><label>האם דוחות נוכחות כוללים שעות שונות ומשתנות או קבועות/מלאכותיות?</label><select id="q674-attendance"><option value="">לא נבדק</option><option value="varied">שונות ומשתנות (מחזק)</option><option value="fixed">קבועות/מלאכותיות (מחשיד)</option></select></div>
+<div class="sub-q"><label>האם תלושי שכר הופקו בזמן אמת או בדיעבד?</label><select id="q674-payslips"><option value="">לא נבדק</option><option value="realtime">בזמן אמת</option><option value="retroactive">בדיעבד (מחשיד)</option></select></div>
+<div class="sub-q"><label>האם שולמו פיצויי פיטורין / זכויות סוציאליות?</label><select id="q674-severance"><option value="">לא נבדק</option><option value="yes">כן (מחזק)</option><option value="no">לא</option></select></div>
+<div class="sub-q"><label>האם היה מחליף בתקופת היעדרות?</label><select id="q674-replacement"><option value="">לא נבדק</option><option value="yes">כן (מחזק מאוד)</option><option value="no">לא היה מחליף (מחשיד)</option></select></div>
+<div class="sub-q"><label>האם השכר תואם להגדרת התפקיד ולהיקף העבודה?</label><select id="q674-salary-match"><option value="">לא נבדק</option><option value="yes">כן - ריאלי</option><option value="no">לא - לא ריאלי (מחשיד)</option></select></div>
+<div class="sub-q"><label>האם תדפיסי הבנק מעידים על תשלום שכר במועד?</label><select id="q674-bank"><option value="">לא נבדק</option><option value="yes">כן - הפקדות סדירות (מחזק)</option><option value="no">לא - אין אסמכתה (מחשיד מאוד)</option></select></div>
+<div class="sub-q"><label>האם יש עדים שיכולים להעיד על עבודה בפועל?</label><select id="q674-witnesses"><option value="">לא נבדק</option><option value="yes">כן - עדים חיצוניים</option><option value="no">לא - רק בני משפחה</option></select></div>
+<div class="sub-q"><label>האם העובד החליף עובד קודם? / האם הוחלף בתקופת היעדרות?</label><select id="q674-predecessor"><option value="">לא נבדק</option><option value="yes">כן (מחזק - תפקיד קיים)</option><option value="no">לא - תפקיד חדש שלא היה קודם</option></select></div>
+</div>
+</div>
+
 <div class="btn-row">
 <button class="btn btn-primary" onclick="runAnalysis()">נתח מקרה והפק המלצה</button>
 <button class="btn btn-secondary" onclick="resetAll()">נקה הכל</button>
@@ -687,6 +704,89 @@ function generateLetter(rec, screening) {
   };
 
   return `המוסד לביטוח לאומי\nמינהל ביטוח וגבייה - תחום הביטוח\n\nתאריך: ${today}\nסניף: ___________\n\nלכבוד\n___________\n\nהנדון: החלטה בעניין מעמד כעובד/ת שכיר/ה\n\nמעמדך כעובד/ת שכיר/ה נבחן על ידינו על פי הגדרת "עובד" שבסעיף 1 לחוק הביטוח הלאומי [נוסח משולב], התשנ"ה-1995.\n\nסוג מקרה: ${caseTypeNames[caseType]}\nקרבה: ${relationNames[relation] || 'אין'}\nתקופת עבודה: ${period} חודשים\nשכר מדווח: ${salary} ₪\n\nלאחר בחינת מכלול הנסיבות, הגענו למסקנה שאין להכיר בך כעובד/ת שכיר/ה.\n\nנימוק:\n${nimukTexts[rec.nimuk] || ''}\n\nממצאי הבדיקה:\n${reasoningText}\nמקור: חוזר ביטוח ${rec.nimuk === 3 ? '1406' : '1207'}\n\nהנך רשאי/ת לערער על החלטה זו לבית הדין האזורי לעבודה בתוך 12 חודשים ממועד קבלת הודעה זו.\n\nבברכה,\nפקיד/ת הביטוח והגבייה\nסניף ___________`;
+}
+
+
+// ===== EVIDENCE-BASED ENHANCEMENT =====
+function enhanceReasoningFromEvidence(rec) {
+  const salary = parseInt(document.getElementById('salary').value) || 0;
+  const raise_pct = parseInt(document.getElementById('salaryRaise').value) || 0;
+  const period = parseInt(document.getElementById('period').value) || 0;
+  const relation = document.getElementById('relation').value;
+  const caseType = document.getElementById('caseType').value;
+  
+  // Pattern: Salary rise before birth (from Feldman, Tiyar cases)
+  if (raise_pct > 30 && rec.recommendation === 'not-recognized') {
+    rec.note += ' | עליית שכר משמעותית (' + raise_pct + '%) מחזקת חשד למניפולציה (ר' פלדמן 35280-07-23, טייאר 21255-05-24)';
+  }
+  
+  // Pattern: No replacement during leave (from Panoyian, Asla, Beeini cases)
+  const noReplacement = document.getElementById('evidence-integration-positive');
+  if (noReplacement && noReplacement.value && noReplacement.value.includes('מחליף')) {
+    rec.note += ' | היעדר מחליף בתקופת היעדרות מעיד שהעבודה לא חיונית (ר' פאנויאן 66381-11-23, עאסלה 38612-04-24)';
+  }
+  
+  // Pattern: Short period + family (from Nof, Biton cases)
+  if (period < 12 && relation !== 'none' && rec.recommendation === 'not-recognized') {
+    rec.note += ' | תקופת עבודה קצרה (' + period + ' חודשים) אצל קרוב מחזקת חשד לעזרה משפחתית';
+  }
+  
+  // Pattern: Controlling owner indirect (from Adir Nazri case)
+  if (caseType === 'controlling-owners' && relation === 'parent-child') {
+    rec.note += ' | בעל שליטה בעקיפין דרך קרוב - ר' אדיר נזרי 55999-08-24 (בת בחברת אב)';
+  }
+  
+  // Pattern: Realistic salary evidence strengthens recognition
+  if (rec.recommendation === 'recognized' && salary > MIN_WAGE) {
+    rec.note += ' | שכר ריאלי (' + salary.toLocaleString() + ' ₪) תומך בהכרה (ר' בן עמי 50219-05-22)';
+  }
+  
+  // Nimuk selection logic improvement
+  if (rec.recommendation === 'not-recognized' && !rec.nimuk) {
+    if (relation === 'spouse' || relation === 'parent-child' || relation === 'siblings') {
+      rec.nimuk = 1; // Family help is default for family cases
+    } else if (caseType === 'controlling-owners') {
+      rec.nimuk = 3; // Self-employed for owners
+    } else {
+      rec.nimuk = 2; // No work performed - default
+    }
+  }
+  
+  // Score from 674 questionnaire
+  let q674_positive = 0, q674_negative = 0;
+  const q674_fields = [
+    {id: 'q674-contract', pos: 'yes', neg: 'no'},
+    {id: 'q674-attendance', pos: 'varied', neg: 'fixed'},
+    {id: 'q674-payslips', pos: 'realtime', neg: 'retroactive'},
+    {id: 'q674-severance', pos: 'yes', neg: 'no'},
+    {id: 'q674-replacement', pos: 'yes', neg: 'no'},
+    {id: 'q674-salary-match', pos: 'yes', neg: 'no'},
+    {id: 'q674-bank', pos: 'yes', neg: 'no'},
+    {id: 'q674-witnesses', pos: 'yes', neg: 'no'},
+    {id: 'q674-predecessor', pos: 'yes', neg: 'no'},
+  ];
+  q674_fields.forEach(field => {
+    const el = document.getElementById(field.id);
+    if (el) {
+      if (el.value === field.pos) q674_positive++;
+      else if (el.value === field.neg) q674_negative++;
+    }
+  });
+  
+  if (q674_positive + q674_negative > 0) {
+    const q674_ratio = q674_positive / (q674_positive + q674_negative);
+    if (q674_ratio >= 0.7 && rec.recommendation === 'not-recognized' && rec.confidence === 'medium') {
+      rec.note += ' | שאלון 674: רוב הממצאים חיוביים (' + q674_positive + '/' + (q674_positive+q674_negative) + ') - שקול הכרה';
+      rec.confidence = 'low'; // Lower confidence since questionnaire contradicts
+    }
+    if (q674_ratio <= 0.3 && rec.recommendation === 'recognized' && rec.confidence === 'medium') {
+      rec.note += ' | שאלון 674: רוב הממצאים שליליים (' + q674_negative + '/' + (q674_positive+q674_negative) + ') - שקול אי-הכרה';
+      rec.confidence = 'low';
+    }
+    if (q674_negative >= 4) {
+      rec.note += ' | אזהרה: ' + q674_negative + ' סממנים שליליים בשאלון 674 (ללא חוזה, ללא הפקדות, ללא מחליף, תלושים בדיעבד)';
+    }
+  }
 }
 
 // ===== UI FUNCTIONS =====
