@@ -195,21 +195,316 @@ const CASE_TYPE_TESTS = {
 };
 
 const PRECEDENTS = [
-{id:'panoyian',num:'66381-11-23',court:'חיפה',level:'אזורי',plaintiff:'קריסטין פאנויאן',date:'12/2025',caseType:'spouse-employment',relation:'spouse',benefit:'unemployment',outcome:'not-recognized',principle:'עבודת בת זוג בעסק בעלה לא חרגה מעזרה משפחתית - לא הוכחו יחסי עובד-מעביד',tags:['spouse','unemployment','jewelry','family-help']},
-{id:'lombrozo',num:'13710-06-22',court:'ארצי',level:'ארצי',plaintiff:'ליאת לומברוזו',date:'07/2023',caseType:'spouse-employment',relation:'spouse',benefit:'maternity',outcome:'recognized',principle:'בני זוג - אין הקפדה יתרה על סממנים פורמליים, יש לבחון גרעין מהותי: שכר בתמורה לעבודה',tags:['spouse','maternity','corona','national-ruling']},
-{id:'haimov',num:'45391-07-25',court:'ארצי',level:'ארצי',plaintiff:'חן חיימוב',date:'12/2025',caseType:'controlling-owners',relation:'owner',benefit:'maternity',outcome:'not-recognized',principle:'בעלת שליטה יחידה שנהגה מנהג בעלים ולא כעובדת - אינה עובדת שכירה',tags:['controlling-owner','maternity','sole-shareholder','worked-during-leave']},
-{id:'badran',num:'6302-01-24',court:'ארצי',level:'ארצי',plaintiff:'בדראן בדראן',date:'07/2025',caseType:'no-employer-identity',relation:'none',benefit:'work-injury',outcome:'recognized',principle:'בנאי שנפגע באתר - מעמד שכיר מוכח במאזן ההסתברויות גם ללא שיתוף מעסיק',tags:['construction','no-employer','work-injury','national-ruling']},
-{id:'douglas',num:'73042-06-23',court:'חיפה',level:'אזורי',plaintiff:'רזק דגלס',date:'08/2025',caseType:'foreign-workers',relation:'none',benefit:'work-injury',outcome:'partial',principle:'ענף בנייה - זיהוי מעסיק: קבלן ראשי vs קבלני משנה, נושא באחריות',tags:['foreign-worker','construction','employer-identity','subcontractor']},
-{id:'adir-nazri',num:'55999-08-24',court:'חיפה',level:'אזורי',plaintiff:'תמר אדיר נזרי',date:'01/2026',caseType:'controlling-owners',relation:'parent-child',benefit:'unemployment',outcome:'not-recognized',principle:'בת שעבדה בחברת אביה בנישה חדשה - שכר נגזר מהכנסות ולא ממהות עבודה, בעלת שליטה בעקיפין',tags:['parent-child','controlling-owner','unemployment','niche-business']},
-{id:'ben-ami',num:'50219-05-22',court:'חיפה',level:'אזורי',plaintiff:'מור בן עמי',date:'2024',caseType:'spouse-employment',relation:'spouse',benefit:'maternity',outcome:'recognized',principle:'העסקת בת זוג שהוכחה אותנטית - שכר ריאלי, הפקדות סדירות, עבודה בפועל',tags:['spouse','maternity','realistic-salary','bank-deposits']},
-{id:'biton',num:'25732-08-23',court:'תל אביב',level:'אזורי',plaintiff:'שרה ביטון',date:'2025',caseType:'family-employment',relation:'parent-child',benefit:'maternity',outcome:'not-recognized',principle:'עבודה אצל בן משפחה ללא תיעוד סדיר ומחליף - עזרה משפחתית',tags:['family','maternity','no-documentation','no-replacement']},
-{id:'dreyfus',num:'44443-01-24',court:'תל אביב',level:'אזורי',plaintiff:'אהד דרייפוס',date:'2025',caseType:'controlling-owners',relation:'owner',benefit:'unemployment',outcome:'not-recognized',principle:'בעל מניות בחברת מעטים - ערבוב פונקציות בעלים ועובד',tags:['controlling-owner','unemployment','minority-shareholder']},
-{id:'shmaoni',num:'42994-09-24',court:'תל אביב',level:'אזורי',plaintiff:'חגי שמעוני',date:'2025',caseType:'family-employment',relation:'parent-child',benefit:'work-injury',outcome:'recognized',principle:'עבודה אמיתית אצל קרוב - הוכח צורך ממשי ומרות',tags:['family','work-injury','genuine-need','supervision']},
-{id:'feldman',num:'35280-07-23',court:'תל אביב',level:'אזורי',plaintiff:'מרינה פלדמן',date:'2025',caseType:'spouse-employment',relation:'spouse',benefit:'maternity',outcome:'not-recognized',principle:'שכר שעלה דרמטית לפני לידה + היעדר מחליף = חשד למניפולציה',tags:['spouse','maternity','salary-manipulation','no-replacement']},
-{id:'madagi',num:'23637-10-24',court:'נצרת',level:'אזורי',plaintiff:'עאוני מדאגי',date:'2025',caseType:'family-employment',relation:'parent-child',benefit:'work-injury',outcome:'recognized',principle:'עבודה בענף בנייה אצל אב - הוכחה ע"י עדים ותיעוד אתר',tags:['family','construction','work-injury','witnesses']},
-{id:'nof',num:'45409-11-23',court:'נצרת',level:'אזורי',plaintiff:'אדווה נוף',date:'2025',caseType:'family-employment',relation:'siblings',benefit:'unemployment',outcome:'not-recognized',principle:'עבודה קצרה אצל אח ללא הוכחות - עזרה משפחתית',tags:['family','siblings','unemployment','short-period']},
-{id:'dokturman',num:'',court:'',level:'אזורי',plaintiff:'אור-לי דוקטורמן',date:'',caseType:'spouse-employment',relation:'spouse',benefit:'maternity',outcome:'recognized',principle:'העסקה אצל בן זוג עם העלאת שליטה - הוכח תפקיד נפרד ושכר ריאלי',tags:['spouse','maternity','separate-role','control-elevation']},
-{id:'beneamim',num:'',court:'ארצי',level:'ארצי',plaintiff:'אבי בנעים',date:'',caseType:'family-employment',relation:'parent-child',benefit:'work-injury',outcome:'not-recognized',principle:'טיפול בהורה קשיש מתוקף הבטחת הכנסה ≠ יחסי עובד-מעביד',tags:['family','parent-child','elderly-care','income-support','national-ruling']}
+{
+"num": "31579-03-23",
+"court": "חיפה",
+"level": "אזורי",
+"plaintiff": "עיידה בעיני",
+"outcome": "not-recognized",
+"caseType": "spouse-employment",
+"benefit": "work-injury",
+"principle": "לא הוכחה עבודה סדירה - לא הוצג תדפיס בנק, לא זומנו עדים. עזרה משפחתית."
+},
+{
+"num": "30719-10-23",
+"court": "ירושלים",
+"level": "אזורי",
+"plaintiff": "בילא גיטל מן",
+"outcome": "not-recognized",
+"caseType": "spouse-employment",
+"benefit": "maternity",
+"principle": "עבודה בחנות בעל ללא שעות מסודרות. לא הוכח שאלמלא היא היה נשכר עובד אחר."
+},
+{
+"num": "15415-05-25",
+"court": "באר שבע",
+"level": "אזורי",
+"plaintiff": "דין צוק סויפרמן",
+"outcome": "recognized",
+"caseType": "athletes",
+"benefit": "work-injury",
+"principle": "ספורטאי כדוריד - צו סיווג מבוטחים. מתקיימים יחסי עו\"מ: כפיפות, ציוד, הסעות."
+},
+{
+"num": "19754-10-21",
+"court": "באר שבע",
+"level": "אזורי",
+"plaintiff": "חיה ויזל",
+"outcome": "not-recognized",
+"caseType": "spouse-employment",
+"benefit": "maternity",
+"principle": "לא הוכח ביצוע עבודה בפועל בעסק בעל."
+},
+{
+"num": "23509-09-24",
+"court": "באר שבע",
+"level": "אזורי",
+"plaintiff": "מורן בוטרשוילי",
+"outcome": "not-recognized",
+"caseType": "spouse-employment",
+"benefit": "unemployment",
+"principle": "עבודה אצל בעל - לא חרגה מעזרה משפחתית."
+},
+{
+"num": "9063-07-22",
+"court": "באר שבע",
+"level": "אזורי",
+"plaintiff": "אנאל יצחקוב",
+"outcome": "not-recognized",
+"caseType": "spouse-employment",
+"benefit": "maternity",
+"principle": "עבודה אצל בעל בקורונה - לא הוכחה אותנטיות."
+},
+{
+"num": "11177-04-23",
+"court": "חיפה",
+"level": "אזורי",
+"plaintiff": "נואל טריף",
+"outcome": "not-recognized",
+"caseType": "spouse-employment",
+"benefit": "maternity",
+"principle": "לא הוכחה עבודה סדירה אצל בן זוג."
+},
+{
+"num": "23693-02-23",
+"court": "חיפה",
+"level": "אזורי",
+"plaintiff": "מרים חוסין",
+"outcome": "not-recognized",
+"caseType": "family-employment",
+"benefit": "maternity",
+"principle": "עבודה אצל קרוב משפחה - עזרה משפחתית, שכר לא ריאלי."
+},
+{
+"num": "35075-12-24",
+"court": "חיפה",
+"level": "אזורי",
+"plaintiff": "סעיד סמיר סוידאן",
+"outcome": "not-recognized",
+"caseType": "foreign-workers",
+"benefit": "work-injury",
+"principle": "עובד זר - לא הוכח מעמד שכיר."
+},
+{
+"num": "38612-04-24",
+"court": "חיפה",
+"level": "אזורי",
+"plaintiff": "נרדין עאסלה",
+"outcome": "not-recognized",
+"caseType": "spouse-employment",
+"benefit": "maternity",
+"principle": "העסקה אצל בעל - היעדר מחליף בחופשת לידה, שכר עלה לפני לידה."
+},
+{
+"num": "3886-12-21",
+"court": "חיפה",
+"level": "אזורי",
+"plaintiff": "עליא ג'בארין",
+"outcome": "not-recognized",
+"caseType": "spouse-employment",
+"benefit": "elderly",
+"principle": "לא הוכרה כעובדת שכירה של בן זוג לצורך אזרח ותיק."
+},
+{
+"num": "50219-05-22",
+"court": "חיפה",
+"level": "אזורי",
+"plaintiff": "מור בן עמי",
+"outcome": "recognized",
+"caseType": "spouse-employment",
+"benefit": "maternity",
+"principle": "הוכחה עבודה אותנטית: שכר ריאלי, הפקדות סדירות, תפקיד מוגדר."
+},
+{
+"num": "55999-08-24",
+"court": "חיפה",
+"level": "אזורי",
+"plaintiff": "תמר אדיר נזרי",
+"outcome": "not-recognized",
+"caseType": "controlling-owners",
+"benefit": "unemployment",
+"principle": "בת בחברת אביה - בעלת שליטה בעקיפין. שכר נגזר מהכנסות."
+},
+{
+"num": "66381-11-23",
+"court": "חיפה",
+"level": "אזורי",
+"plaintiff": "קריסטין פאנויאן",
+"outcome": "not-recognized",
+"caseType": "spouse-employment",
+"benefit": "unemployment",
+"principle": "עבודת בת זוג בעסק תכשיטים - לא חרגה מעזרה משפחתית."
+},
+{
+"num": "73042-06-23",
+"court": "חיפה",
+"level": "אזורי",
+"plaintiff": "רזק דגלס",
+"outcome": "recognized",
+"caseType": "foreign-workers",
+"benefit": "work-injury",
+"principle": "תושב שטחים בענף בנייה - קבלן ראשי נושא באחריות."
+},
+{
+"num": "12764-07-24",
+"court": "ירושלים",
+"level": "אזורי",
+"plaintiff": "רחל גניחובסקי",
+"outcome": "not-recognized",
+"caseType": "spouse-employment",
+"benefit": "maternity",
+"principle": "עבודה אצל בעל - שכר לא ריאלי, היעדר תיעוד סדיר."
+},
+{
+"num": "23637-10-24",
+"court": "נצרת",
+"level": "אזורי",
+"plaintiff": "עאוני מדאגי",
+"outcome": "recognized",
+"caseType": "family-employment",
+"benefit": "work-injury",
+"principle": "עבודה אצל אב בענף בנייה - הוכחה ע\"י עדים ותיעוד אתר."
+},
+{
+"num": "34660-09-23",
+"court": "נצרת",
+"level": "אזורי",
+"plaintiff": "איילה סזונום",
+"outcome": "not-recognized",
+"caseType": "spouse-employment",
+"benefit": "maternity",
+"principle": "עבודה אצל בעל - לא הוכחה סדירות וצורך ממשי."
+},
+{
+"num": "45409-11-23",
+"court": "נצרת",
+"level": "אזורי",
+"plaintiff": "אדווה נוף",
+"outcome": "recognized",
+"caseType": "spouse-employment",
+"benefit": "maternity",
+"principle": "הוכחו יחסי עו\"מ: תפקיד נפרד, שכר ריאלי, תיעוד."
+},
+{
+"num": "49303-01-24",
+"court": "נצרת",
+"level": "אזורי",
+"plaintiff": "מריאנה רושרוש",
+"outcome": "not-recognized",
+"caseType": "spouse-employment",
+"benefit": "maternity",
+"principle": "העסקה אצל בן זוג - לא חרגה מעזרה משפחתית."
+},
+{
+"num": "20408-12-22",
+"court": "תל אביב",
+"level": "אזורי",
+"plaintiff": "בן בכור",
+"outcome": "not-recognized",
+"caseType": "athletes",
+"benefit": "work-injury",
+"principle": "ספורטאי - לא עמד בתנאי הצו, לא הוכח מעמד שכיר."
+},
+{
+"num": "21255-05-24",
+"court": "תל אביב",
+"level": "אזורי",
+"plaintiff": "קטי ליהיא טייאר",
+"outcome": "not-recognized",
+"caseType": "spouse-employment",
+"benefit": "maternity",
+"principle": "עבודה אצל בעל - שכר עלה דרמטית לפני לידה."
+},
+{
+"num": "25732-08-23",
+"court": "תל אביב",
+"level": "אזורי",
+"plaintiff": "שרה ביטון",
+"outcome": "not-recognized",
+"caseType": "family-employment",
+"benefit": "maternity",
+"principle": "עבודה אצל קרוב - לא הוכחו צורך ממשי ומרות."
+},
+{
+"num": "35280-07-23",
+"court": "תל אביב",
+"level": "אזורי",
+"plaintiff": "מרינה פלדמן",
+"outcome": "not-recognized",
+"caseType": "spouse-employment",
+"benefit": "maternity",
+"principle": "שכר עלה דרמטית לפני לידה + היעדר מחליף = חשד למניפולציה."
+},
+{
+"num": "42994-09-24",
+"court": "תל אביב",
+"level": "אזורי",
+"plaintiff": "חגי שמעוני",
+"outcome": "recognized",
+"caseType": "family-employment",
+"benefit": "work-injury",
+"principle": "עבודה אמיתית אצל קרוב - הוכח צורך ממשי ומרות."
+},
+{
+"num": "44443-01-24",
+"court": "תל אביב",
+"level": "אזורי",
+"plaintiff": "אהד דרייפוס",
+"outcome": "not-recognized",
+"caseType": "controlling-owners",
+"benefit": "unemployment",
+"principle": "בעל מניות בחברת מעטים - ערבוב פונקציות בעלים ועובד."
+},
+{
+"num": "65138-11-23",
+"court": "תל אביב",
+"level": "אזורי",
+"plaintiff": "רונלי דן",
+"outcome": "not-recognized",
+"caseType": "spouse-employment",
+"benefit": "unemployment",
+"principle": "עבודה אצל בעל - לא הוכחה אותנטיות."
+},
+{
+"num": "73348-05-23",
+"court": "תל אביב",
+"level": "אזורי",
+"plaintiff": "יבנת מלח ארואס",
+"outcome": "not-recognized",
+"caseType": "spouse-employment",
+"benefit": "unemployment",
+"principle": "עבודה אצל בעל - עזרה משפחתית."
+},
+{
+"num": "41670-12-22",
+"court": "תל אביב",
+"level": "אזורי",
+"plaintiff": "עבד אללה נגאר",
+"outcome": "not-recognized",
+"caseType": "foreign-workers",
+"benefit": "work-injury",
+"principle": "עובד זר - לא הוכח מעמד שכיר."
+},
+{
+"num": "6302-01-24",
+"court": "ארצי",
+"level": "ארצי",
+"plaintiff": "בדראן בדראן",
+"outcome": "recognized",
+"caseType": "foreign-workers",
+"benefit": "work-injury",
+"principle": "בנאי שנפגע - מעמד שכיר הוכח במאזן ההסתברויות גם ללא שיתוף מעסיק."
+},
+{
+"num": "45391-07-25",
+"court": "ארצי",
+"level": "ארצי",
+"plaintiff": "חן חיימוב",
+"outcome": "not-recognized",
+"caseType": "controlling-owners",
+"benefit": "maternity",
+"principle": "בעלת שליטה יחידה שנהגה מנהג בעלים - אינה עובדת שכירה."
+}
 ];
 
 // ===== SCREENING LOGIC =====
