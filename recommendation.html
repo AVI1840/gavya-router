@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מערכת המלצה לקביעת מעמד</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;background:#f0f4f8;color:#1a365d;line-height:1.6;padding:16px}
+.container{max-width:900px;margin:0 auto}
+.header{background:linear-gradient(135deg,#1a365d,#2c5282);color:#fff;padding:20px 28px;border-radius:12px;margin-bottom:12px;text-align:center}
+.header h1{font-size:24px;margin-bottom:4px}
+.header p{font-size:13px;opacity:.8}
+.disclaimer{background:#fff5f5;border:2px solid #fc8181;border-radius:8px;padding:10px 16px;margin-bottom:12px;text-align:center;font-weight:700;color:#c53030;font-size:14px}
+.section{background:#fff;border-radius:10px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden}
+.section-header{background:#f7fafc;padding:12px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e2e8f0}
+.section-header h2{font-size:16px;color:#2c5282}
+.section-header .toggle{font-size:18px;color:#718096}
+.section-body{padding:18px;display:none}
+.section-body.open{display:block}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.form-group{display:flex;flex-direction:column}
+.form-group label{font-size:13px;font-weight:600;margin-bottom:4px;color:#4a5568}
+.form-group select,.form-group input{padding:8px 10px;border:1.5px solid #e2e8f0;border-radius:6px;font-size:14px;background:#fff}
+.form-group select:focus,.form-group input:focus{border-color:#63b3ed;outline:none}
+.test-section{border:1px solid #e2e8f0;border-radius:8px;margin-bottom:8px;overflow:hidden}
+.test-header{padding:10px 14px;background:#f7fafc;cursor:pointer;display:flex;justify-content:space-between;font-size:14px;font-weight:600;color:#2c5282}
+.test-body{padding:12px 14px;display:none;background:#fff}
+.test-body.open{display:block}
+.sub-q{margin-bottom:10px;padding:8px;background:#f7fafc;border-radius:6px}
+.sub-q label{font-size:13px;display:block;margin-bottom:4px;font-weight:500}
+.sub-q select{padding:4px 8px;border:1px solid #e2e8f0;border-radius:4px;font-size:13px}
+.sub-q input[type=text]{width:100%;padding:4px 8px;border:1px solid #e2e8f0;border-radius:4px;font-size:12px;margin-top:4px}
+.btn{padding:10px 24px;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-primary{background:#2c5282;color:#fff}
+.btn-primary:hover{background:#1a365d}
+.btn-secondary{background:#e2e8f0;color:#1a365d}
+.btn-secondary:hover{background:#cbd5e0}
+.btn-row{display:flex;gap:10px;margin-top:14px;justify-content:center}
+.result-panel{border-radius:10px;padding:18px;margin-bottom:12px}
+.result-ok{background:#f0fff4;border:2px solid #68d391}
+.result-no{background:#fff5f5;border:2px solid #fc8181}
+.result-warn{background:#fffff0;border:2px solid #ecc94b}
+.result-info{background:#ebf8ff;border:2px solid #63b3ed}
+.result-panel h3{font-size:18px;margin-bottom:10px}
+.result-ok h3{color:#276749}
+.result-no h3{color:#c53030}
+.result-warn h3{color:#975a16}
+.confidence{display:inline-block;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;margin-right:8px}
+.conf-high{background:#c6f6d5;color:#276749}
+.conf-medium{background:#fefcbf;color:#975a16}
+.conf-low{background:#fed7d7;color:#c53030}
+.reasoning-list{list-style:none;margin:12px 0}
+.reasoning-list li{padding:6px 10px;margin-bottom:4px;border-radius:4px;font-size:13px;background:rgba(255,255,255,.6)}
+.reasoning-list .pass{border-right:3px solid #68d391}
+.reasoning-list .fail{border-right:3px solid #fc8181}
+.reasoning-list .source{font-size:11px;color:#718096;font-style:italic}
+.letter-box{background:#fff;border:2px solid #e2e8f0;border-radius:8px;padding:20px;font-size:14px;line-height:1.8;white-space:pre-wrap;direction:rtl}
+.letter-box .letter-header{text-align:center;margin-bottom:16px;font-weight:700}
+.precedent-card{background:#f7fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin-bottom:8px}
+.precedent-card .case-num{font-size:12px;color:#718096}
+.precedent-card .outcome{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700}
+.outcome-recognized{background:#c6f6d5;color:#276749}
+.outcome-not{background:#fed7d7;color:#c53030}
+.footer{text-align:center;padding:12px;font-size:11px;color:#a0aec0}
+@media print{.section-header,.disclaimer,.btn-row,.footer,#input-section{display:none}.section-body{display:block!important}.letter-box{border:none;padding:0}}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>מערכת המלצה לקביעת מעמד</h1>
+<p>כלי תמיכה בהחלטה לפקידי ביטוח וגבייה | מבוסס חוזרי ביטוח 1207, 1406, 1504, ועדת סינון 2018</p>
+</div>
+<div class="disclaimer">⚠️ זוהי המלצה בלבד — הפקיד/ה מקבל/ת את ההחלטה הסופית</div>
+
+<!-- INPUT SECTION -->
+<div class="section" id="input-section">
+<div class="section-header" onclick="toggleSection('input')"><h2>הזנת פרטי מקרה</h2><span class="toggle" id="toggle-input">▼</span></div>
+<div class="section-body open" id="body-input">
+<div class="form-row">
+<div class="form-group"><label>סוג מקרה:</label><select id="caseType" onchange="onCaseTypeChange()"><option value="">בחר...</option><option value="family-employment">העסקת קרוב משפחה</option><option value="spouse-employment">העסקת בן/בת זוג</option><option value="controlling-owners">בעל/ת שליטה</option><option value="household-workers">עובד/ת משק בית</option><option value="athletes">ספורטאי/ת</option><option value="foreign-workers">עובד/ת זר/ה / תושב שטחים</option><option value="no-employer-identity">ללא זהות מעסיק</option></select></div>
+<div class="form-group"><label>סוג קרבה:</label><select id="relation"><option value="none">אין קרבה</option><option value="spouse">בן/בת זוג</option><option value="parent-child">הורה-ילד</option><option value="siblings">אח/ות</option><option value="cousins">בני דודים</option><option value="in-laws">חותן/חמות/גיס</option><option value="owner">בעל/ת שליטה</option></select></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>תקופת עבודה (חודשים):</label><input type="number" id="period" min="0" max="600" placeholder="למשל: 24"></div>
+<div class="form-group"><label>שכר חודשי (₪ ברוטו):</label><input type="number" id="salary" min="0" placeholder="למשל: 5300"></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>עליית שכר בחודשי הבסיס (%):</label><input type="number" id="salaryRaise" min="0" max="500" placeholder="0"></div>
+<div class="form-group"><label>סוג גמלה שהפעילה בדיקה:</label><select id="benefitType"><option value="">לא רלוונטי</option><option value="maternity">דמי לידה (אימהות)</option><option value="unemployment">דמי אבטלה</option><option value="elderly">אזרח ותיק</option><option value="work-injury">דמי פגיעה בעבודה</option><option value="work-grant">מענק עבודה נדרשת</option></select></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label>תביעה חוזרת מאותו קרוב?</label><select id="repeatClaim"><option value="no">לא</option><option value="yes">כן (פחות מ-3 שנים)</option></select></div>
+<div class="form-group"><label>דיווח בזמן אמת?</label><select id="timelyReport"><option value="yes">כן</option><option value="no">לא - בדיעבד</option></select></div>
+</div>
+
+<h3 style="margin:16px 0 10px;font-size:15px;color:#2c5282">ממצאי מבחנים משפטיים:</h3>
+<div id="tests-container"></div>
+
+<div class="btn-row">
+<button class="btn btn-primary" onclick="runAnalysis()">נתח מקרה והפק המלצה</button>
+<button class="btn btn-secondary" onclick="resetAll()">נקה הכל</button>
+</div>
+</div>
+</div>
+
+<!-- RESULTS SECTION -->
+<div class="section" id="results-section" style="display:none">
+<div class="section-header" onclick="toggleSection('results')"><h2>תוצאות הניתוח</h2><span class="toggle" id="toggle-results">▼</span></div>
+<div class="section-body open" id="body-results">
+<div id="screening-result"></div>
+<div id="recommendation-result"></div>
+<div id="reasoning-result"></div>
+</div>
+</div>
+
+<!-- LETTER SECTION -->
+<div class="section" id="letter-section" style="display:none">
+<div class="section-header" onclick="toggleSection('letter')"><h2>טיוטת מכתב</h2><span class="toggle" id="toggle-letter">▼</span></div>
+<div class="section-body open" id="body-letter">
+<div class="btn-row" style="margin-bottom:12px">
+<button class="btn btn-secondary" onclick="copyLetter()">📋 העתק מכתב</button>
+<button class="btn btn-secondary" onclick="window.print()">🖨️ הדפס</button>
+</div>
+<div class="letter-box" id="letter-content"></div>
+</div>
+</div>
+
+<!-- PRECEDENTS SECTION -->
+<div class="section" id="precedents-section" style="display:none">
+<div class="section-header" onclick="toggleSection('precedents')"><h2>פסקי דין רלוונטיים</h2><span class="toggle" id="toggle-precedents">▼</span></div>
+<div class="section-body open" id="body-precedents">
+<div id="precedents-list"></div>
+</div>
+</div>
+
+<div class="footer">מערכת המלצה לקביעת מעמד v1.0 | Scale4U Pilot | צוות חדשנות ותשתית | יוני 2026<br><strong>המערכת ממליצה — הפקיד/ה מחליט/ה</strong></div>
+</div>
+
+<script>
+// ===== DATA CONSTANTS =====
+const MIN_WAGE = 5571; // שכר מינימום 2024
+
+const LEGAL_TESTS = [
+{id:'integration',name:'מבחן ההשתלבות',weight:'primary',questions:[
+{id:'integration-positive',text:'הפן החיובי - האם העובד מבצע פעולה הנדרשת לפעילות הרגילה של העסק?'},
+{id:'integration-negative',text:'הפן השלילי - האם לעובד עסק עצמאי משלו המשרת גם לקוחות אחרים?'},
+{id:'integration-fabric',text:'האם העובד מהווה חלק אינטגרלי מהמרקם הארגוני?'}
+]},
+{id:'control',name:'מבחן הפיקוח והשליטה',weight:'primary',questions:[
+{id:'control-hours',text:'האם המעסיק קובע את שעות העבודה?'},
+{id:'control-method',text:'האם המעסיק מכתיב את אופן ביצוע העבודה?'},
+{id:'control-location',text:'האם המעסיק קובע את מקום העבודה?'},
+{id:'control-discipline',text:'האם למעסיק סמכות משמעתית?'}
+]},
+{id:'personal-service',name:'מבחן הביצוע האישי',weight:'supporting',questions:[
+{id:'personal-substitute',text:'האם העובד יכול לשלוח מחליף מטעמו?'},
+{id:'personal-unique',text:'האם נדרשים כישורים אישיים ספציפיים?'}
+]},
+{id:'economic-dependence',name:'מבחן התלות הכלכלית',weight:'supporting',questions:[
+{id:'econ-single-source',text:'האם הכנסת העובד ממקור יחיד (המעסיק)?'},
+{id:'econ-tools',text:'מי מספק את כלי העבודה?'},
+{id:'econ-expenses',text:'מי נושא בהוצאות הנלוות?'}
+]},
+{id:'organizational-framework',name:'מבחן המסגרת הארגונית',weight:'supporting',questions:[
+{id:'org-continuity',text:'האם העבודה מתבצעת באופן רצוף וקבוע?'},
+{id:'org-benefits',text:'האם העובד מקבל תנאים סוציאליים?'},
+{id:'org-reporting',text:'האם קיימת מערכת דיווח נוכחות סדורה?'},
+{id:'org-payment',text:'האם התשלום בתלוש שכר סדיר?'}
+]},
+{id:'economic-risk',name:'מבחן הסיכון הכלכלי',weight:'supporting',questions:[
+{id:'risk-profit-loss',text:'האם העובד חשוף לרווח והפסד של העסק?'},
+{id:'risk-investment',text:'האם העובד השקיע הון עצמי בעסק?'}
+]},
+{id:'exclusivity',name:'מבחן הבלעדיות',weight:'supporting',questions:[
+{id:'excl-other',text:'האם העובד עובד גם עבור מעסיקים/לקוחות נוספים?'}
+]},
+{id:'profit-loss-sharing',name:'מבחן השותפות ברווחים',weight:'owner',questions:[
+{id:'pls-dividends',text:'האם העובד מקבל דיבידנדים או חלק מהרווחים?'},
+{id:'pls-losses',text:'האם העובד חשוף להפסדי החברה?'},
+{id:'pls-guarantees',text:'האם העובד ערב אישית להתחייבויות העסק?'}
+]}
+];
+
+const CASE_TYPE_TESTS = {
+'family-employment':['integration','control','personal-service','economic-dependence','organizational-framework'],
+'spouse-employment':['integration','control','personal-service','economic-dependence','organizational-framework'],
+'controlling-owners':['control','economic-risk','organizational-framework','profit-loss-sharing'],
+'household-workers':['integration','control','personal-service','organizational-framework'],
+'athletes':['integration','control','exclusivity','organizational-framework'],
+'foreign-workers':['integration','control','organizational-framework'],
+'no-employer-identity':['integration','control','economic-dependence','organizational-framework']
+};
+
+const PRECEDENTS = [
+{id:'panoyian',num:'66381-11-23',court:'חיפה',level:'אזורי',plaintiff:'קריסטין פאנויאן',date:'12/2025',caseType:'spouse-employment',relation:'spouse',benefit:'unemployment',outcome:'not-recognized',principle:'עבודת בת זוג בעסק בעלה לא חרגה מעזרה משפחתית - לא הוכחו יחסי עובד-מעביד',tags:['spouse','unemployment','jewelry','family-help']},
+{id:'lombrozo',num:'13710-06-22',court:'ארצי',level:'ארצי',plaintiff:'ליאת לומברוזו',date:'07/2023',caseType:'spouse-employment',relation:'spouse',benefit:'maternity',outcome:'recognized',principle:'בני זוג - אין הקפדה יתרה על סממנים פורמליים, יש לבחון גרעין מהותי: שכר בתמורה לעבודה',tags:['spouse','maternity','corona','national-ruling']},
+{id:'haimov',num:'45391-07-25',court:'ארצי',level:'ארצי',plaintiff:'חן חיימוב',date:'12/2025',caseType:'controlling-owners',relation:'owner',benefit:'maternity',outcome:'not-recognized',principle:'בעלת שליטה יחידה שנהגה מנהג בעלים ולא כעובדת - אינה עובדת שכירה',tags:['controlling-owner','maternity','sole-shareholder','worked-during-leave']},
+{id:'badran',num:'6302-01-24',court:'ארצי',level:'ארצי',plaintiff:'בדראן בדראן',date:'07/2025',caseType:'no-employer-identity',relation:'none',benefit:'work-injury',outcome:'recognized',principle:'בנאי שנפגע באתר - מעמד שכיר מוכח במאזן ההסתברויות גם ללא שיתוף מעסיק',tags:['construction','no-employer','work-injury','national-ruling']},
+{id:'douglas',num:'73042-06-23',court:'חיפה',level:'אזורי',plaintiff:'רזק דגלס',date:'08/2025',caseType:'foreign-workers',relation:'none',benefit:'work-injury',outcome:'partial',principle:'ענף בנייה - זיהוי מעסיק: קבלן ראשי vs קבלני משנה, נושא באחריות',tags:['foreign-worker','construction','employer-identity','subcontractor']},
+{id:'adir-nazri',num:'55999-08-24',court:'חיפה',level:'אזורי',plaintiff:'תמר אדיר נזרי',date:'01/2026',caseType:'controlling-owners',relation:'parent-child',benefit:'unemployment',outcome:'not-recognized',principle:'בת שעבדה בחברת אביה בנישה חדשה - שכר נגזר מהכנסות ולא ממהות עבודה, בעלת שליטה בעקיפין',tags:['parent-child','controlling-owner','unemployment','niche-business']},
+{id:'ben-ami',num:'50219-05-22',court:'חיפה',level:'אזורי',plaintiff:'מור בן עמי',date:'2024',caseType:'spouse-employment',relation:'spouse',benefit:'maternity',outcome:'recognized',principle:'העסקת בת זוג שהוכחה אותנטית - שכר ריאלי, הפקדות סדירות, עבודה בפועל',tags:['spouse','maternity','realistic-salary','bank-deposits']},
+{id:'biton',num:'25732-08-23',court:'תל אביב',level:'אזורי',plaintiff:'שרה ביטון',date:'2025',caseType:'family-employment',relation:'parent-child',benefit:'maternity',outcome:'not-recognized',principle:'עבודה אצל בן משפחה ללא תיעוד סדיר ומחליף - עזרה משפחתית',tags:['family','maternity','no-documentation','no-replacement']},
+{id:'dreyfus',num:'44443-01-24',court:'תל אביב',level:'אזורי',plaintiff:'אהד דרייפוס',date:'2025',caseType:'controlling-owners',relation:'owner',benefit:'unemployment',outcome:'not-recognized',principle:'בעל מניות בחברת מעטים - ערבוב פונקציות בעלים ועובד',tags:['controlling-owner','unemployment','minority-shareholder']},
+{id:'shmaoni',num:'42994-09-24',court:'תל אביב',level:'אזורי',plaintiff:'חגי שמעוני',date:'2025',caseType:'family-employment',relation:'parent-child',benefit:'work-injury',outcome:'recognized',principle:'עבודה אמיתית אצל קרוב - הוכח צורך ממשי ומרות',tags:['family','work-injury','genuine-need','supervision']},
+{id:'feldman',num:'35280-07-23',court:'תל אביב',level:'אזורי',plaintiff:'מרינה פלדמן',date:'2025',caseType:'spouse-employment',relation:'spouse',benefit:'maternity',outcome:'not-recognized',principle:'שכר שעלה דרמטית לפני לידה + היעדר מחליף = חשד למניפולציה',tags:['spouse','maternity','salary-manipulation','no-replacement']},
+{id:'madagi',num:'23637-10-24',court:'נצרת',level:'אזורי',plaintiff:'עאוני מדאגי',date:'2025',caseType:'family-employment',relation:'parent-child',benefit:'work-injury',outcome:'recognized',principle:'עבודה בענף בנייה אצל אב - הוכחה ע"י עדים ותיעוד אתר',tags:['family','construction','work-injury','witnesses']},
+{id:'nof',num:'45409-11-23',court:'נצרת',level:'אזורי',plaintiff:'אדווה נוף',date:'2025',caseType:'family-employment',relation:'siblings',benefit:'unemployment',outcome:'not-recognized',principle:'עבודה קצרה אצל אח ללא הוכחות - עזרה משפחתית',tags:['family','siblings','unemployment','short-period']},
+{id:'dokturman',num:'',court:'',level:'אזורי',plaintiff:'אור-לי דוקטורמן',date:'',caseType:'spouse-employment',relation:'spouse',benefit:'maternity',outcome:'recognized',principle:'העסקה אצל בן זוג עם העלאת שליטה - הוכח תפקיד נפרד ושכר ריאלי',tags:['spouse','maternity','separate-role','control-elevation']},
+{id:'beneamim',num:'',court:'ארצי',level:'ארצי',plaintiff:'אבי בנעים',date:'',caseType:'family-employment',relation:'parent-child',benefit:'work-injury',outcome:'not-recognized',principle:'טיפול בהורה קשיש מתוקף הבטחת הכנסה ≠ יחסי עובד-מעביד',tags:['family','parent-child','elderly-care','income-support','national-ruling']}
+];
+
+// ===== SCREENING LOGIC =====
+function evaluateScreening() {
+  const benefit = document.getElementById('benefitType').value;
+  const relation = document.getElementById('relation').value;
+  const period = parseInt(document.getElementById('period').value) || 0;
+  const salary = parseInt(document.getElementById('salary').value) || 0;
+  const raise = parseInt(document.getElementById('salaryRaise').value) || 0;
+  const repeat = document.getElementById('repeatClaim').value === 'yes';
+  const caseType = document.getElementById('caseType').value;
+
+  if (!benefit) return { action: 'na', note: 'לא צוין סוג גמלה - בחינת מעמד עצמאית' };
+
+  // BLOCKING RULES
+  if (relation === 'spouse' && benefit === 'unemployment') {
+    return { action: 'block', note: 'חקירת חוץ חובה! העסקה בין בני זוג בתביעת אבטלה', source: 'ועדת סינון 2018 - "חלה חובה להעביר לחקירות חוץ ללא הגבלה"', severity: 'critical' };
+  }
+  if (caseType === 'household-workers' && benefit === 'work-injury') {
+    return { action: 'block', note: 'בדיקה מלאה ללא סינון! פגיעה בעבודה במשק בית', source: 'חוזר 1504 - "כל תביעות פגיעה בעבודה ייבדקו ללא סינון"', severity: 'critical' };
+  }
+
+  if (benefit === 'maternity') {
+    if (relation === 'none' || relation === '') return { action: 'approve', note: 'אין קרבה - פקיד תביעות מאשר', source: 'ועדת סינון 2018' };
+    if (period < 18) return { action: 'committee', note: 'תקופה קצרה מ-18 חודשים', form: 'בל/674', source: 'ועדת סינון 2018 - אימהות' };
+    if (period >= 18 && period <= 36) {
+      if (salary <= MIN_WAGE) return { action: 'approve', note: 'שכר עד מינימום + 18-36 חודשים (בכפוף להוכחות הפקדה 10 חודשים)', source: 'ועדת סינון 2018' };
+      return { action: 'committee', note: 'שכר מעל מינימום + תקופה 18-36 חודשים', form: 'בל/674', source: 'ועדת סינון 2018 - אימהות' };
+    }
+    if (period > 36) {
+      if (raise <= 30) return { action: 'approve', note: 'תקופה 36+ חודשים, עליה עד 30% - לשלם ללא הסבר', source: 'ועדת סינון 2018' };
+      if (raise <= 50) return { action: 'explain', note: 'עליה 30-50% - לקבל הסבר והוכחות', source: 'ועדת סינון 2018' };
+      return { action: 'committee', note: 'עליה מעל 50% בשכר', form: 'בל/674', source: 'ועדת סינון 2018' };
+    }
+  }
+
+  if (benefit === 'unemployment') {
+    if (period >= 36) return { action: 'approve', note: 'תקופה 36+ חודשים - פקיד אבטלה מאשר', source: 'ועדת סינון 2018 - אבטלה' };
+    if (period >= 18 && salary <= MIN_WAGE) return { action: 'approve', note: '18-36 חודשים + שכר עד מינימום + הפקדות', source: 'ועדת סינון 2018' };
+    if (repeat) return { action: 'committee', note: 'תביעה חוזרת מאותו קרוב בפחות מ-3 שנים', source: 'ועדת סינון 2018' };
+    if (raise > 50) return { action: 'committee', note: 'עליה מעל 50% בשכר', source: 'ועדת סינון 2018' };
+    if (raise >= 25 && raise <= 50) return { action: 'approve', note: 'עליה 25-50% למשך 6+ חודשים - פקיד מאשר', source: 'ועדת סינון 2018' };
+    return { action: 'committee', note: 'תקופה קצרה / שכר מעל מינימום', form: 'בל/674', source: 'ועדת סינון 2018' };
+  }
+
+  if (benefit === 'elderly') {
+    if (relation === 'none') return { action: 'approve', note: 'אין קרבה - אישור ביקורת גביה', source: 'ועדת סינון 2018 - אזרח ותיק' };
+    if (period >= 144) return { action: 'approve', note: '12+ שנים - פקיד מאשר ללא חקירה', source: 'ועדת סינון 2018' };
+    if (period >= 72) return { action: 'approve', note: '6+ שנים ב-10 שנים לפני פרישה', source: 'ועדת סינון 2018' };
+    return { action: 'committee', note: 'תקופה קצרה מ-6 שנים סמוך לפרישה', source: 'ועדת סינון 2018 - אזרח ותיק' };
+  }
+
+  if (benefit === 'work-injury') {
+    if (relation !== 'none' && period < 6) return { action: 'committee', note: 'קרבה משפחתית + תקופה קצרה מ-6 חודשים', form: 'בל/674', source: 'ועדת סינון 2018 - דמי פגיעה' };
+    if (raise > 25) return { action: 'committee', note: 'עליית שכר מעל 25%', form: 'בל/674', source: 'ועדת סינון 2018' };
+    if (document.getElementById('timelyReport').value === 'no') return { action: 'committee', note: 'דיווח בדיעבד (לא בזמן אמת)', source: 'ועדת סינון 2018' };
+    return { action: 'committee', note: 'בדיקה נדרשת - קרבה + פגיעה', form: 'בל/674', source: 'ועדת סינון 2018' };
+  }
+
+  return { action: 'committee', note: 'מקרה דורש בחינה', source: 'ועדת סינון 2018' };
+}
+
+// ===== LEGAL TEST SCORING =====
+function scoreLegalTests() {
+  const caseType = document.getElementById('caseType').value;
+  const applicableTests = CASE_TYPE_TESTS[caseType] || [];
+  let primaryPass = 0, primaryFail = 0, supportingPass = 0, supportingFail = 0, ownerFail = 0;
+  let breakdown = [];
+
+  applicableTests.forEach(testId => {
+    const test = LEGAL_TESTS.find(t => t.id === testId);
+    if (!test) return;
+    let testPass = 0, testFail = 0, testTotal = 0;
+
+    test.questions.forEach(q => {
+      const el = document.getElementById('answer-' + q.id);
+      if (!el) return;
+      const val = el.value;
+      if (val === 'yes') { testPass++; testTotal++; }
+      else if (val === 'no') { testFail++; testTotal++; }
+      else if (val === 'partial') { testPass += 0.5; testFail += 0.5; testTotal++; }
+    });
+
+    if (testTotal === 0) return;
+    const ratio = testPass / testTotal;
+    const result = ratio >= 0.6 ? 'pass' : ratio <= 0.4 ? 'fail' : 'partial';
+
+    if (test.weight === 'primary') { if (result === 'pass') primaryPass++; else if (result === 'fail') primaryFail++; }
+    else if (test.weight === 'owner') { if (result === 'fail') ownerFail++; }
+    else { if (result === 'pass') supportingPass++; else if (result === 'fail') supportingFail++; }
+
+    breakdown.push({ name: test.name, result, weight: test.weight });
+  });
+
+  return { primaryPass, primaryFail, supportingPass, supportingFail, ownerFail, breakdown };
+}
+
+// ===== RECOMMENDATION SYNTHESIS =====
+function synthesizeRecommendation(screening, testScore) {
+  const caseType = document.getElementById('caseType').value;
+  const relation = document.getElementById('relation').value;
+
+  // Blocking rules override everything
+  if (screening.severity === 'critical') {
+    return { recommendation: 'escalate', confidence: 'high', nimuk: null, note: screening.note };
+  }
+
+  // Owner + profit-loss = likely self-employed
+  if (caseType === 'controlling-owners' && testScore.ownerFail > 0 && testScore.primaryFail > 0) {
+    return { recommendation: 'not-recognized', confidence: 'high', nimuk: 3, note: 'ממצאי מבחנים מצביעים על מעמד עצמאי/בעל שליטה' };
+  }
+
+  // Primary tests decisive
+  if (testScore.primaryPass >= 2 && testScore.primaryFail === 0) {
+    return { recommendation: 'recognized', confidence: 'high', nimuk: null, note: 'מבחנים מרכזיים (השתלבות + פיקוח) מתקיימים' };
+  }
+  if (testScore.primaryFail >= 2 && testScore.primaryPass === 0) {
+    if (relation !== 'none' && relation !== '') {
+      return { recommendation: 'not-recognized', confidence: 'high', nimuk: 1, note: 'מבחנים מרכזיים לא מתקיימים + קרבה משפחתית = עזרה משפחתית' };
+    }
+    return { recommendation: 'not-recognized', confidence: 'medium', nimuk: 2, note: 'לא הוכח קיום יחסי עובד-מעביד' };
+  }
+
+  // Mixed results
+  if (testScore.primaryPass > 0 && testScore.primaryFail > 0) {
+    return { recommendation: 'escalate', confidence: 'low', nimuk: null, note: 'תוצאות מעורבות במבחנים מרכזיים - מומלץ להעמיק או ועדת סינון' };
+  }
+
+  // Supporting tests tiebreaker
+  if (testScore.supportingPass > testScore.supportingFail) {
+    return { recommendation: 'recognized', confidence: 'medium', nimuk: null, note: 'מבחנים משלימים נוטים לכיוון הכרה' };
+  }
+  if (testScore.supportingFail > testScore.supportingPass) {
+    return { recommendation: 'not-recognized', confidence: 'medium', nimuk: 1, note: 'מבחנים משלימים נוטים לכיוון אי-הכרה' };
+  }
+
+  return { recommendation: 'escalate', confidence: 'low', nimuk: null, note: 'לא ניתן לקבוע - מומלץ ועדת סינון / חקירה' };
+}
+
+// ===== PRECEDENT MATCHING =====
+function matchPrecedents(caseType, relation, benefit, recommendation) {
+  return PRECEDENTS.map(p => {
+    let score = 0;
+    if (p.caseType === caseType) score += 30;
+    if (p.relation === relation) score += 20;
+    if (p.benefit === benefit) score += 15;
+    if (p.outcome === recommendation) score += 15;
+    if (p.level === 'ארצי') score += 10;
+    return { ...p, score };
+  }).sort((a, b) => b.score - a.score).slice(0, 3);
+}
+
+// ===== LETTER GENERATION =====
+function generateLetter(rec, screening) {
+  const caseType = document.getElementById('caseType').value;
+  const period = document.getElementById('period').value || '___';
+  const salary = document.getElementById('salary').value || '___';
+  const relation = document.getElementById('relation').value;
+  const today = new Date().toLocaleDateString('he-IL');
+
+  const caseTypeNames = {'family-employment':'העסקת קרוב משפחה','spouse-employment':'העסקת בן/בת זוג','controlling-owners':'בעל/ת שליטה','household-workers':'משק בית','athletes':'ספורטאי/ת','foreign-workers':'עובד/ת זר/ה','no-employer-identity':'ללא זהות מעסיק'};
+  const relationNames = {'none':'','spouse':'בן/בת זוג','parent-child':'הורה-ילד','siblings':'אח/ות','cousins':'בני דודים','in-laws':'משפחה מורחבת','owner':'בעל/ת שליטה'};
+
+  let reasoningText = '';
+  const testScore = scoreLegalTests();
+  testScore.breakdown.forEach(t => {
+    const icon = t.result === 'pass' ? '✓' : t.result === 'fail' ? '✗' : '~';
+    const text = t.result === 'pass' ? 'מתקיים' : t.result === 'fail' ? 'לא מתקיים' : 'חלקי';
+    reasoningText += `  • ${t.name}: ${text}\n`;
+  });
+
+  if (rec.recommendation === 'recognized') {
+    return `המוסד לביטוח לאומי\nמינהל ביטוח וגבייה - תחום הביטוח\n\nתאריך: ${today}\nסניף: ___________\n\nלכבוד\nמחלקת ___________\n\nהנדון: אישור מעמד - ${caseTypeNames[caseType] || ''}\n\nלאחר בחינת הממצאים בעניין המבוטח/ת, נקבע כי מתקיימים יחסי עובד-מעביד.\n\nסוג מקרה: ${caseTypeNames[caseType]}\nקרבה: ${relationNames[relation] || 'אין'}\nתקופת עבודה: ${period} חודשים\nשכר: ${salary} ₪\n\nממצאים תומכים:\n${reasoningText}\nהחלטה זו מתבססת על המבחן המעורב שבמרכזו מבחן ההשתלבות, בהתאם לפסיקה.\n\nבברכה,\nפקיד/ת הביטוח והגבייה`;
+  }
+
+  const nimukTexts = {
+    1: 'סוג העבודה ו/או היקף שעות העבודה ו/או גובה התמורה אינו ריאלי וסביר, ו/או מצביעים על כך שהעבודה מבוצעת במסגרת עזרה הדדית טבעית בין בני משפחה, ואין המדובר בעבודה נחוצה באופן כזה שהיו מעסיקים עובד אחר בשכר.',
+    2: 'לא הוכח כי בוצעה עבודה בפועל.',
+    3: 'העבודה בוצעה כעובד עצמאי ולא כעובד שכיר.'
+  };
+
+  return `המוסד לביטוח לאומי\nמינהל ביטוח וגבייה - תחום הביטוח\n\nתאריך: ${today}\nסניף: ___________\n\nלכבוד\n___________\n\nהנדון: החלטה בעניין מעמד כעובד/ת שכיר/ה\n\nמעמדך כעובד/ת שכיר/ה נבחן על ידינו על פי הגדרת "עובד" שבסעיף 1 לחוק הביטוח הלאומי [נוסח משולב], התשנ"ה-1995.\n\nסוג מקרה: ${caseTypeNames[caseType]}\nקרבה: ${relationNames[relation] || 'אין'}\nתקופת עבודה: ${period} חודשים\nשכר מדווח: ${salary} ₪\n\nלאחר בחינת מכלול הנסיבות, הגענו למסקנה שאין להכיר בך כעובד/ת שכיר/ה.\n\nנימוק:\n${nimukTexts[rec.nimuk] || ''}\n\nממצאי הבדיקה:\n${reasoningText}\nמקור: חוזר ביטוח ${rec.nimuk === 3 ? '1406' : '1207'}\n\nהנך רשאי/ת לערער על החלטה זו לבית הדין האזורי לעבודה בתוך 12 חודשים ממועד קבלת הודעה זו.\n\nבברכה,\nפקיד/ת הביטוח והגבייה\nסניף ___________`;
+}
+
+// ===== UI FUNCTIONS =====
+function onCaseTypeChange() {
+  const caseType = document.getElementById('caseType').value;
+  const applicableTests = CASE_TYPE_TESTS[caseType] || [];
+  const container = document.getElementById('tests-container');
+  container.innerHTML = '';
+
+  applicableTests.forEach(testId => {
+    const test = LEGAL_TESTS.find(t => t.id === testId);
+    if (!test) return;
+    let questionsHtml = test.questions.map(q => `
+      <div class="sub-q">
+        <label>${q.text}</label>
+        <select id="answer-${q.id}">
+          <option value="">לא נבדק</option>
+          <option value="yes">כן</option>
+          <option value="no">לא</option>
+          <option value="partial">חלקי</option>
+        </select>
+        <input type="text" id="evidence-${q.id}" placeholder="ראיה / הסבר (אופציונלי)">
+      </div>
+    `).join('');
+
+    container.innerHTML += `
+      <div class="test-section">
+        <div class="test-header" onclick="this.nextElementSibling.classList.toggle('open')">${test.name} <span style="font-size:12px;color:#718096">[${test.weight === 'primary' ? 'מרכזי' : test.weight === 'owner' ? 'בעלי שליטה' : 'משלים'}]</span></div>
+        <div class="test-body">${questionsHtml}</div>
+      </div>`;
+  });
+}
+
+function toggleSection(id) {
+  const body = document.getElementById('body-' + id);
+  const toggle = document.getElementById('toggle-' + id);
+  body.classList.toggle('open');
+  toggle.textContent = body.classList.contains('open') ? '▼' : '▶';
+}
+
+function runAnalysis() {
+  const caseType = document.getElementById('caseType').value;
+  if (!caseType) { alert('יש לבחור סוג מקרה'); return; }
+
+  // Phase 1: Screening
+  const screening = evaluateScreening();
+
+  // Phase 2: Legal tests
+  const testScore = scoreLegalTests();
+
+  // Phase 3: Recommendation
+  const rec = synthesizeRecommendation(screening, testScore);
+
+  // Phase 4: Precedents
+  const relation = document.getElementById('relation').value;
+  const benefit = document.getElementById('benefitType').value;
+  const precedents = matchPrecedents(caseType, relation, benefit, rec.recommendation);
+
+  // Phase 5: Letter
+  const letter = generateLetter(rec, screening);
+
+  // Render all results
+  renderResults(screening, testScore, rec, precedents, letter);
+}
+
+function renderResults(screening, testScore, rec, precedents, letter) {
+  // Show sections
+  document.getElementById('results-section').style.display = 'block';
+  document.getElementById('letter-section').style.display = 'block';
+  document.getElementById('precedents-section').style.display = 'block';
+
+  // Screening result
+  const screenColors = { approve: 'result-ok', committee: 'result-warn', block: 'result-no', investigate: 'result-no', explain: 'result-warn', na: 'result-info' };
+  const screenLabels = { approve: '✅ פקיד מאשר', committee: '⚠️ ועדת סינון', block: '⛔ חסימה', investigate: '🔍 חקירה נדרשת', explain: '📋 הסבר + הוכחות', na: 'ℹ️ בחינה עצמאית' };
+  document.getElementById('screening-result').innerHTML = `<div class="result-panel ${screenColors[screening.action] || 'result-info'}"><h3>סינון ראשוני: ${screenLabels[screening.action] || screening.action}</h3><p>${screening.note}</p>${screening.form ? '<p>טופס: <strong>' + screening.form + '</strong></p>' : ''}<p class="reasoning-list"><span class="source">מקור: ${screening.source || ''}</span></p></div>`;
+
+  // Recommendation
+  const recColors = { recognized: 'result-ok', 'not-recognized': 'result-no', escalate: 'result-warn' };
+  const recLabels = { recognized: '✅ המלצה: מוכר - יחסי עובד-מעביד מתקיימים', 'not-recognized': '❌ המלצה: לא מוכר', escalate: '⚠️ המלצה: דורש העמקה / ועדת סינון' };
+  const confLabels = { high: 'גבוהה', medium: 'בינונית', low: 'נמוכה' };
+  document.getElementById('recommendation-result').innerHTML = `<div class="result-panel ${recColors[rec.recommendation]}"><h3>${recLabels[rec.recommendation]}</h3><span class="confidence conf-${rec.confidence}">רמת ביטחון: ${confLabels[rec.confidence]}</span>${rec.nimuk ? '<span style="margin-right:12px;font-size:13px">נימוק: ' + rec.nimuk + '</span>' : ''}<p style="margin-top:8px">${rec.note}</p></div>`;
+
+  // Reasoning breakdown
+  let reasonHtml = '<ul class="reasoning-list">';
+  testScore.breakdown.forEach(t => {
+    const cls = t.result === 'pass' ? 'pass' : t.result === 'fail' ? 'fail' : '';
+    const icon = t.result === 'pass' ? '✓ מתקיים' : t.result === 'fail' ? '✗ לא מתקיים' : '~ חלקי';
+    const weightLabel = t.weight === 'primary' ? '[מרכזי]' : t.weight === 'owner' ? '[בעלי שליטה]' : '[משלים]';
+    reasonHtml += `<li class="${cls}"><strong>${t.name}</strong> ${weightLabel}: ${icon}</li>`;
+  });
+  reasonHtml += '</ul>';
+  document.getElementById('reasoning-result').innerHTML = reasonHtml;
+
+  // Letter
+  document.getElementById('letter-content').textContent = letter;
+
+  // Precedents
+  let precHtml = '';
+  precedents.forEach(p => {
+    const outcomeClass = p.outcome === 'recognized' ? 'outcome-recognized' : 'outcome-not';
+    const outcomeLabel = p.outcome === 'recognized' ? 'מוכר' : p.outcome === 'not-recognized' ? 'לא מוכר' : 'חלקי';
+    precHtml += `<div class="precedent-card"><div style="display:flex;justify-content:space-between;align-items:center"><strong>${p.plaintiff}</strong><span class="outcome ${outcomeClass}">${outcomeLabel}</span></div><div class="case-num">${p.num ? 'ב.ל. (' + p.court + ') ' + p.num : ''} | ${p.level} | ${p.date}</div><p style="font-size:13px;margin-top:6px">${p.principle}</p></div>`;
+  });
+  document.getElementById('precedents-list').innerHTML = precHtml;
+
+  // Scroll to results
+  document.getElementById('results-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+function copyLetter() {
+  const text = document.getElementById('letter-content').textContent;
+  navigator.clipboard.writeText(text).then(() => alert('המכתב הועתק ללוח'));
+}
+
+function resetAll() {
+  document.getElementById('caseType').value = '';
+  document.getElementById('relation').value = 'none';
+  document.getElementById('period').value = '';
+  document.getElementById('salary').value = '';
+  document.getElementById('salaryRaise').value = '';
+  document.getElementById('benefitType').value = '';
+  document.getElementById('repeatClaim').value = 'no';
+  document.getElementById('timelyReport').value = 'yes';
+  document.getElementById('tests-container').innerHTML = '';
+  document.getElementById('results-section').style.display = 'none';
+  document.getElementById('letter-section').style.display = 'none';
+  document.getElementById('precedents-section').style.display = 'none';
+}
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('body-input').classList.add('open');
+});
+</script>
+</body>
+</html>
