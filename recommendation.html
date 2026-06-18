@@ -582,7 +582,14 @@ function evaluateScreening() {
   }
 
   return { action: 'committee', note: 'מקרה דורש בחינה', source: 'ועדת סינון 2018' };
-}
+  }
+
+  if (benefit === 'work-grant') {
+    if (relation === 'none' && period >= 6) return { action: 'approve', note: 'עבודה 6+ חודשים וממשיך לעבוד - פקיד אבטלה מאשר', source: 'ועדת סינון 2018 - מענק עבודה נדרשת' };
+    if (period < 6 && (relation !== 'none')) return { action: 'committee', note: '6 חודשי עבודה בלבד אצל קרוב', form: 'בל/674', source: 'ועדת סינון 2018 - מענק' };
+    if (relation !== 'none') return { action: 'committee', note: 'השלמת תקופת עבודה נדרשת אצל קרוב', form: 'בל/674', source: 'ועדת סינון 2018 - מענק' };
+    return { action: 'approve', source: 'ועדת סינון 2018' };
+  }
 
 // ===== LEGAL TEST SCORING =====
 function scoreLegalTests() {
@@ -623,6 +630,24 @@ function scoreLegalTests() {
 function synthesizeRecommendation(screening, testScore) {
   const caseType = document.getElementById('caseType').value;
   const relation = document.getElementById('relation').value;
+  const benefit = document.getElementById('benefitType').value;
+  const period = parseInt(document.getElementById('period').value) || 0;
+  const salary = parseInt(document.getElementById('salary').value) || 0;
+
+  // Athletes special logic (from 2022 instructions)
+  if (caseType === 'athletes') {
+    if (benefit === 'work-injury' && salary >= 1500 && period >= 1) {
+      return { recommendation: 'recognized', confidence: 'high', nimuk: null, note: 'ספורטאי כדורגל/כדורסל - פגיעה בעונה, שכר מעל 1,500₪ - פקיד תביעות מאשר (הוראות 2022). ר' דין צוק סויפרמן 15415-05-25.' };
+    }
+    if (salary < 1500) {
+      return { recommendation: 'escalate', confidence: 'medium', nimuk: null, note: 'ספורטאי - שכר מתחת 1,500₪ → מועבר לבחינת פקיד ביטוח וגביה. ר' בן בכור 20408-12-22 (נדחה - לא עמד בתנאי הצו).' };
+    }
+  }
+
+  // Household + work injury = always full check (Circular 1504)
+  if (caseType === 'household-workers' && benefit === 'work-injury') {
+    return { recommendation: 'escalate', confidence: 'high', nimuk: null, note: 'חריג: פגיעה בעבודה במשק בית - ייבדק ללא סינון וללא הבחנה לגבי אורך תקופת הדיווח (חוזר 1504). יש לוודא שלא נעשתה מניפולציה להגדלת בסיס.' };
+  }
 
   // Blocking rules override everything
   if (screening.severity === 'critical') {
@@ -867,7 +892,7 @@ function renderResults(screening, testScore, rec, precedents, letter) {
   const recColors = { recognized: 'result-ok', 'not-recognized': 'result-no', escalate: 'result-warn' };
   const recLabels = { recognized: '✅ המלצה: מוכר - יחסי עובד-מעביד מתקיימים', 'not-recognized': '❌ המלצה: לא מוכר', escalate: '⚠️ המלצה: דורש העמקה / ועדת סינון' };
   const confLabels = { high: 'גבוהה', medium: 'בינונית', low: 'נמוכה' };
-  document.getElementById('recommendation-result').innerHTML = `<div class="result-panel ${recColors[rec.recommendation]}"><h3>${recLabels[rec.recommendation]}</h3><span class="confidence conf-${rec.confidence}">רמת ביטחון: ${confLabels[rec.confidence]}</span>${rec.nimuk ? '<span style="margin-right:12px;font-size:13px">נימוק: ' + rec.nimuk + '</span>' : ''}<p style="margin-top:8px">${rec.note}</p></div>`;
+  document.getElementById('recommendation-result').innerHTML = `<div class="result-panel ${recColors[rec.recommendation]}"><h3>${recLabels[rec.recommendation]}</h3><span class="confidence conf-${rec.confidence}">רמת ביטחון: ${confLabels[rec.confidence]}</span>${rec.nimuk ? '<span style="margin-right:12px;font-size:13px">נימוק מומלץ: ' + rec.nimuk + ' (' + {1:'עזרה משפחתית/לא ריאלי',2:'לא הוכח ביצוע עבודה',3:'עצמאי ולא שכיר'}[rec.nimuk] + ')</span>' : ''}<p style="margin-top:8px">${rec.note}</p></div>`;
 
   // Reasoning breakdown
   let reasonHtml = '<ul class="reasoning-list">';
@@ -878,6 +903,23 @@ function renderResults(screening, testScore, rec, precedents, letter) {
     reasonHtml += `<li class="${cls}"><strong>${t.name}</strong> ${weightLabel}: ${icon}</li>`;
   });
   reasonHtml += '</ul>';
+  // Add 674 summary
+  let q674Html = '';
+  let q674p = 0, q674n = 0;
+  ['q674-contract','q674-attendance','q674-payslips','q674-severance','q674-replacement','q674-salary-match','q674-bank','q674-witnesses','q674-predecessor'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.value) {
+      if (['yes','varied','realtime'].includes(el.value)) q674p++;
+      else if (['no','fixed','retroactive'].includes(el.value)) q674n++;
+    }
+  });
+  if (q674p + q674n > 0) {
+    const pct = Math.round(q674p / (q674p + q674n) * 100);
+    const color = pct >= 60 ? '#276749' : pct <= 40 ? '#c53030' : '#975a16';
+    const bg = pct >= 60 ? '#c6f6d5' : pct <= 40 ? '#fed7d7' : '#fefcbf';
+    q674Html = '<div style="margin-top:12px;padding:10px;border-radius:8px;background:' + bg + ';border:1px solid ' + color + '"><strong style="color:' + color + '">שאלון בל/674: ' + q674p + ' חיוביים, ' + q674n + ' שליליים (' + pct + '% חיובי)</strong></div>';
+  }
+  reasonHtml += q674Html;
   document.getElementById('reasoning-result').innerHTML = reasonHtml;
 
   // Letter
