@@ -2,51 +2,52 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&family=Assistant:wght@400;600;700&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>מנתב הגבייה v2 - דמו</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; background: #f0f4f8; color: #1a365d; line-height: 1.6; padding: 20px; }
+        body { font-family: 'Rubik', 'Assistant', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #F0F8FF; color: #012c4a; line-height: 1.6; padding: 20px; }
         .container { max-width: 850px; margin: 0 auto; }
-        .header { background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%); color: white; padding: 24px; border-radius: 12px; margin-bottom: 20px; text-align: center; }
+        .header { background: linear-gradient(135deg, #012c4a 0%, #0368b0 100%); color: white; padding: 24px; border-radius: 8px; margin-bottom: 20px; text-align: center; }
         .header h1 { font-size: 26px; margin-bottom: 6px; }
         .header p { opacity: 0.8; font-size: 13px; }
-        .nav { background: white; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-        .nav h2 { margin-bottom: 14px; color: #2c5282; font-size: 18px; }
+        .nav { background: white; border-radius: 8px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(6,77,173,0.1); }
+        .nav h2 { margin-bottom: 14px; color: #0368b0; font-size: 18px; }
         .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .nav-btn { padding: 14px 16px; background: #ebf8ff; border: 2px solid #bee3f8; border-radius: 8px; cursor: pointer; text-align: right; transition: all 0.2s; color: #1a365d; font-size: 14px; }
-        .nav-btn:hover { background: #bee3f8; border-color: #63b3ed; transform: translateY(-1px); }
+        .nav-btn { padding: 14px 16px; background: #e8f3ff; border: 2px solid #bee3f8; border-radius: 8px; cursor: pointer; text-align: right; transition: all 0.2s; color: #012c4a; font-size: 14px; }
+        .nav-btn:hover { background: #bee3f8; border-color: #0068f5; transform: translateY(-1px); }
         .nav-btn strong { display: block; font-size: 15px; margin-bottom: 4px; }
-        .nav-btn small { color: #4a5568; font-size: 12px; }
-        .card { background: white; border-radius: 12px; padding: 24px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); display: none; }
+        .nav-btn small { color: #266794; font-size: 12px; }
+        .card { background: white; border-radius: 8px; padding: 24px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(6,77,173,0.1); display: none; }
         .card.active { display: block; }
-        .card h3 { color: #2c5282; margin-bottom: 14px; font-size: 17px; border-bottom: 2px solid #ebf8ff; padding-bottom: 8px; }
-        .q { background: #f7fafc; border-radius: 8px; padding: 14px; margin-bottom: 10px; }
+        .card h3 { color: #0368b0; margin-bottom: 14px; font-size: 17px; border-bottom: 2px solid #e8f3ff; padding-bottom: 8px; }
+        .q { background: #F0F8FF; border-radius: 8px; padding: 14px; margin-bottom: 10px; }
         .q label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; }
         .opts { display: flex; flex-wrap: wrap; gap: 6px; }
-        .opt { padding: 8px 14px; border: 2px solid #e2e8f0; border-radius: 6px; background: white; cursor: pointer; font-size: 13px; transition: all 0.15s; color: #1a365d; }
-        .opt:hover { border-color: #63b3ed; background: #ebf8ff; }
-        .opt.sel { border-color: #2c5282; background: #2c5282; color: white; }
+        .opt { padding: 8px 14px; border: 2px solid #b5c7e2; border-radius: 6px; background: white; cursor: pointer; font-size: 13px; transition: all 0.15s; color: #012c4a; }
+        .opt:hover { border-color: #0068f5; background: #e8f3ff; }
+        .opt.sel { border-color: #0368b0; background: #0368b0; color: white; }
         .res { border-radius: 10px; padding: 20px; margin-top: 14px; }
-        .res-ok { background: #f0fff4; border: 2px solid #68d391; }
-        .res-no { background: #fff5f5; border: 2px solid #fc8181; }
-        .res-warn { background: #fffff0; border: 2px solid #ecc94b; }
-        .res-info { background: #ebf8ff; border: 2px solid #63b3ed; }
+        .res-ok { background: #f5ffef; border: 2px solid #367C39; }
+        .res-no { background: #ffefef; border: 2px solid #c93435; }
+        .res-warn { background: #FFF3E0; border: 2px solid #f59e0b; }
+        .res-info { background: #e8f3ff; border: 2px solid #0068f5; }
         .res h4 { font-size: 16px; margin-bottom: 10px; }
-        .res-ok h4 { color: #276749; }
-        .res-no h4 { color: #c53030; }
-        .res-warn h4 { color: #975a16; }
-        .res-info h4 { color: #2c5282; }
+        .res-ok h4 { color: #367C39; }
+        .res-no h4 { color: #c93435; }
+        .res-warn h4 { color: #BD4200; }
+        .res-info h4 { color: #0368b0; }
         .step { padding: 6px 10px; margin-bottom: 4px; background: rgba(255,255,255,0.6); border-radius: 4px; font-size: 13px; }
         .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; }
-        .b-scr { background: #ebf8ff; color: #2c5282; }
-        .b-form { background: #fefcbf; color: #975a16; }
-        .b-warn { background: #fed7d7; color: #c53030; }
-        .b-ok { background: #c6f6d5; color: #276749; }
-        .back-btn { display: inline-block; margin-top: 14px; padding: 8px 16px; background: #e2e8f0; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; color: #1a365d; }
+        .b-scr { background: #e8f3ff; color: #0368b0; }
+        .b-form { background: #FFF3E0; color: #BD4200; }
+        .b-warn { background: #ffefef; color: #c93435; }
+        .b-ok { background: #EAF7E3; color: #367C39; }
+        .back-btn { display: inline-block; margin-top: 14px; padding: 8px 16px; background: #b5c7e2; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; color: #012c4a; }
         .back-btn:hover { background: #cbd5e0; }
         .footer { text-align: center; padding: 16px; color: #a0aec0; font-size: 11px; }
-        .source { font-size: 11px; color: #718096; margin-top: 8px; font-style: italic; }
+        .source { font-size: 11px; color: #737382; margin-top: 8px; font-style: italic; }
     </style>
 </head>
 <body>
@@ -180,7 +181,7 @@
             <div class="step"><strong>שלב 2:</strong> פנה ל<span class="badge b-warn">מוקד רציפות ביטוח</span> → בקש עדכון עיסוק ממקור 126 שבוטל</div>
             <div class="step"><strong>שלב 3:</strong> <span class="badge b-scr">מערכת "עסק"</span> → קלוט מחדש דוחות 102 (מקוד 88 → קוד מקורי) + הוסף עובד בגב הטופס</div>
             <div class="step"><strong>שלב 4:</strong> <span class="badge b-scr">מסך 124 (עסק)</span> + <span class="badge b-scr">מסך 120 (גל"ש)</span> → הערה עם סיבת הביטול</div>
-            <div class="step" style="background:#fff5f5;margin-top:8px"><strong>⚠️ אזהרה:</strong> אין לשלוח בקשות ביטול תקופת העסקה ממקור 126 למחלקת רציפות ביטוח - הביטול מתבצע אוטומטית עם הזמנת קבמע.</div>
+            <div class="step" style="background:#ffefef;margin-top:8px"><strong>⚠️ אזהרה:</strong> אין לשלוח בקשות ביטול תקופת העסקה ממקור 126 למחלקת רציפות ביטוח - הביטול מתבצע אוטומטית עם הזמנת קבמע.</div>
             <p class="source">מקור: חוזר 1406, עמוד 5 - "אופן ביטול של ביטול העיסוק כשכיר"</p>
         </div>
         <button class="back-btn" onclick="goHome()">חזרה</button>
@@ -198,7 +199,7 @@
             <div class="step"><strong>שהות לא כדין:</strong> גמלה נשללת אחרי 30 יום מפקיעת אשרה</div>
             <div class="step"><strong>חריג - מענק נכות:</strong> משולם ללא בדיקת שהות</div>
             <div class="step"><strong>חריג - טיפול רפואי:</strong> תמיד, גם ללא שהות כדין</div>
-            <div class="step" style="margin-top:8px;background:#ebf8ff"><strong>תושב שטחים בדרך לעבודה:</strong> מבוטח רק אם מתגורר בישראל/ישובים + תאונה בשטח C (לא באוטונומיה)</div>
+            <div class="step" style="margin-top:8px;background:#e8f3ff"><strong>תושב שטחים בדרך לעבודה:</strong> מבוטח רק אם מתגורר בישראל/ישובים + תאונה בשטח C (לא באוטונומיה)</div>
             <p class="source">מקור: חוזר נפגעי עבודה 25/2012 - "הנחיות לטיפול בתביעות תושבי שטחים/עובדים זרים"</p>
         </div>
         <button class="back-btn" onclick="goHome()">חזרה</button>
@@ -256,8 +257,8 @@ if(q==='single'){showCancelResult();}
 function showCancelResult(){
   let reason=ans.reason==='claim'?'תביעה לגמלה':'חקירה משטרתית';
   let nimuk={'1':'עזרה משפחתית/לא ריאלי','2':'לא הוכח שבוצעה עבודה','3':'עצמאי ולא שכיר'}[ans.nimuk];
-  let close=ans.single==='yes'?`<div class="step" style="background:#fff5f5"><strong>סגירת תיק:</strong> עובד יחיד → סגור פעילות. סוג: ${ans.nimuk==='3'?'"לא פעיל-עצמאי" (לע)':'"לא פעיל-אוטומטי"'}</div>`:'';
-  let n3=ans.nimuk==='3'?'<div class="step" style="background:#fffff0"><strong>שים לב (נימוק 3):</strong> במערכת "מבוטח" לא תבוטל תקופת העבודה. קוד דיווח ישתנה ל-88 בלבד. פרטי העובד ושכרו ללא שינוי.</div><div class="step"><strong>פתיחת תיק עצמאי:</strong> העבר לגל"ש בקשה לפתיחת תיק מהחודש העוקב.</div>':'';
+  let close=ans.single==='yes'?`<div class="step" style="background:#ffefef"><strong>סגירת תיק:</strong> עובד יחיד → סגור פעילות. סוג: ${ans.nimuk==='3'?'"לא פעיל-עצמאי" (לע)':'"לא פעיל-אוטומטי"'}</div>`:'';
+  let n3=ans.nimuk==='3'?'<div class="step" style="background:#FFF3E0"><strong>שים לב (נימוק 3):</strong> במערכת "מבוטח" לא תבוטל תקופת העבודה. קוד דיווח ישתנה ל-88 בלבד. פרטי העובד ושכרו ללא שינוי.</div><div class="step"><strong>פתיחת תיק עצמאי:</strong> העבר לגל"ש בקשה לפתיחת תיק מהחודש העוקב.</div>':'';
   document.getElementById('c-result').innerHTML=`<div class="res res-ok" style="display:block"><h4>✅ הנחיות ביצוע:</h4><div class="step"><strong>כניסה:</strong> <span class="badge b-scr">מסך 614</span> → F1 → <span class="badge b-form">קביעת מעמד (קבמע)</span></div><div class="step"><strong>עילה:</strong> ${reason} → סמן "כ"</div><div class="step"><strong>נימוק:</strong> ${nimuk}</div><div class="step"><strong>התקיימו יחסי עו"מ:</strong> שנה ל-"ל" (לא התקיימו)</div>${close}${n3}<div class="step"><strong>סיום:</strong> F3 (נימוקים מפורטים) → F12 (עדכון)</div><div class="step" style="background:#f0f4ff;margin-top:8px"><strong>🕐 מנת לילה תבצע:</strong> הודעה למעסיק (611) + למבוטח (311) + ${ans.nimuk!=='3'?'ביטול דוחות 102 → קוד 88 + ביטול תקופות + ביטול 126':'שינוי קוד ל-88 בלבד'} + חסימה במסך 163</div><p class="source">מקור: חוזר 1406</p></div><button class="back-btn" onclick="goHome()">חזרה</button>`;
 }
 
