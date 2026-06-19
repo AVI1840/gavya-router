@@ -2,66 +2,67 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&family=Assistant:wght@400;600;700&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>מערכת המלצה לקביעת מעמד</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;background:#f0f4f8;color:#1a365d;line-height:1.6;padding:16px}
+body{font-family:'Rubik','Assistant',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F0F8FF;color:#012c4a;line-height:1.6;padding:16px}
 .container{max-width:900px;margin:0 auto}
-.header{background:linear-gradient(135deg,#1a365d,#2c5282);color:#fff;padding:20px 28px;border-radius:12px;margin-bottom:12px;text-align:center}
+.header{background:linear-gradient(135deg,#012c4a,#0368b0);color:#fff;padding:20px 28px;border-radius:8px;margin-bottom:12px;text-align:center}
 .header h1{font-size:24px;margin-bottom:4px}
 .header p{font-size:13px;opacity:.8}
-.disclaimer{background:#fff5f5;border:2px solid #fc8181;border-radius:8px;padding:10px 16px;margin-bottom:12px;text-align:center;font-weight:700;color:#c53030;font-size:14px}
-.section{background:#fff;border-radius:10px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden}
-.section-header{background:#f7fafc;padding:12px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e2e8f0}
-.section-header h2{font-size:16px;color:#2c5282}
-.section-header .toggle{font-size:18px;color:#718096}
+.disclaimer{background:#ffefef;border:2px solid #c93435;border-radius:8px;padding:10px 16px;margin-bottom:12px;text-align:center;font-weight:700;color:#c93435;font-size:14px}
+.section{background:#fff;border-radius:10px;margin-bottom:12px;box-shadow:0 1px 4px rgba(6,77,173,0.1);overflow:hidden}
+.section-header{background:#F0F8FF;padding:12px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #b5c7e2}
+.section-header h2{font-size:16px;color:#0368b0}
+.section-header .toggle{font-size:18px;color:#737382}
 .section-body{padding:18px;display:none}
 .section-body.open{display:block}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
 .form-group{display:flex;flex-direction:column}
-.form-group label{font-size:13px;font-weight:600;margin-bottom:4px;color:#4a5568}
-.form-group select,.form-group input{padding:8px 10px;border:1.5px solid #e2e8f0;border-radius:6px;font-size:14px;background:#fff}
-.form-group select:focus,.form-group input:focus{border-color:#63b3ed;outline:none}
-.test-section{border:1px solid #e2e8f0;border-radius:8px;margin-bottom:8px;overflow:hidden}
-.test-header{padding:10px 14px;background:#f7fafc;cursor:pointer;display:flex;justify-content:space-between;font-size:14px;font-weight:600;color:#2c5282}
+.form-group label{font-size:13px;font-weight:600;margin-bottom:4px;color:#266794}
+.form-group select,.form-group input{padding:8px 10px;border:1.5px solid #b5c7e2;border-radius:6px;font-size:14px;background:#fff}
+.form-group select:focus,.form-group input:focus{border-color:#0068f5;outline:none}
+.test-section{border:1px solid #b5c7e2;border-radius:8px;margin-bottom:8px;overflow:hidden}
+.test-header{padding:10px 14px;background:#F0F8FF;cursor:pointer;display:flex;justify-content:space-between;font-size:14px;font-weight:600;color:#0368b0}
 .test-body{padding:12px 14px;display:none;background:#fff}
 .test-body.open{display:block}
-.sub-q{margin-bottom:10px;padding:8px;background:#f7fafc;border-radius:6px}
+.sub-q{margin-bottom:10px;padding:8px;background:#F0F8FF;border-radius:6px}
 .sub-q label{font-size:13px;display:block;margin-bottom:4px;font-weight:500}
-.sub-q select{padding:4px 8px;border:1px solid #e2e8f0;border-radius:4px;font-size:13px}
-.sub-q input[type=text]{width:100%;padding:4px 8px;border:1px solid #e2e8f0;border-radius:4px;font-size:12px;margin-top:4px}
+.sub-q select{padding:4px 8px;border:1px solid #b5c7e2;border-radius:4px;font-size:13px}
+.sub-q input[type=text]{width:100%;padding:4px 8px;border:1px solid #b5c7e2;border-radius:4px;font-size:12px;margin-top:4px}
 .btn{padding:10px 24px;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s}
-.btn-primary{background:#2c5282;color:#fff}
-.btn-primary:hover{background:#1a365d}
-.btn-secondary{background:#e2e8f0;color:#1a365d}
+.btn-primary{background:#0368b0;color:#fff}
+.btn-primary:hover{background:#012c4a}
+.btn-secondary{background:#b5c7e2;color:#012c4a}
 .btn-secondary:hover{background:#cbd5e0}
 .btn-row{display:flex;gap:10px;margin-top:14px;justify-content:center}
 .result-panel{border-radius:10px;padding:18px;margin-bottom:12px}
-.result-ok{background:#f0fff4;border:2px solid #68d391}
-.result-no{background:#fff5f5;border:2px solid #fc8181}
-.result-warn{background:#fffff0;border:2px solid #ecc94b}
-.result-info{background:#ebf8ff;border:2px solid #63b3ed}
+.result-ok{background:#f5ffef;border:2px solid #367C39}
+.result-no{background:#ffefef;border:2px solid #c93435}
+.result-warn{background:#FFF3E0;border:2px solid #f59e0b}
+.result-info{background:#e8f3ff;border:2px solid #0068f5}
 .result-panel h3{font-size:18px;margin-bottom:10px}
-.result-ok h3{color:#276749}
-.result-no h3{color:#c53030}
-.result-warn h3{color:#975a16}
-.confidence{display:inline-block;padding:3px 10px;border-radius:12px;font-size:12px;font-weight:700;margin-right:8px}
-.conf-high{background:#c6f6d5;color:#276749}
-.conf-medium{background:#fefcbf;color:#975a16}
-.conf-low{background:#fed7d7;color:#c53030}
+.result-ok h3{color:#367C39}
+.result-no h3{color:#c93435}
+.result-warn h3{color:#BD4200}
+.confidence{display:inline-block;padding:3px 10px;border-radius:8px;font-size:12px;font-weight:700;margin-right:8px}
+.conf-high{background:#EAF7E3;color:#367C39}
+.conf-medium{background:#FFF3E0;color:#BD4200}
+.conf-low{background:#ffefef;color:#c93435}
 .reasoning-list{list-style:none;margin:12px 0}
 .reasoning-list li{padding:6px 10px;margin-bottom:4px;border-radius:4px;font-size:13px;background:rgba(255,255,255,.6)}
-.reasoning-list .pass{border-right:3px solid #68d391}
-.reasoning-list .fail{border-right:3px solid #fc8181}
-.reasoning-list .source{font-size:11px;color:#718096;font-style:italic}
-.letter-box{background:#fff;border:2px solid #e2e8f0;border-radius:8px;padding:20px;font-size:14px;line-height:1.8;white-space:pre-wrap;direction:rtl}
+.reasoning-list .pass{border-right:3px solid #367C39}
+.reasoning-list .fail{border-right:3px solid #c93435}
+.reasoning-list .source{font-size:11px;color:#737382;font-style:italic}
+.letter-box{background:#fff;border:2px solid #b5c7e2;border-radius:8px;padding:20px;font-size:14px;line-height:1.8;white-space:pre-wrap;direction:rtl}
 .letter-box .letter-header{text-align:center;margin-bottom:16px;font-weight:700}
-.precedent-card{background:#f7fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;margin-bottom:8px}
-.precedent-card .case-num{font-size:12px;color:#718096}
+.precedent-card{background:#F0F8FF;border:1px solid #b5c7e2;border-radius:8px;padding:12px;margin-bottom:8px}
+.precedent-card .case-num{font-size:12px;color:#737382}
 .precedent-card .outcome{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700}
-.outcome-recognized{background:#c6f6d5;color:#276749}
-.outcome-not{background:#fed7d7;color:#c53030}
+.outcome-recognized{background:#EAF7E3;color:#367C39}
+.outcome-not{background:#ffefef;color:#c93435}
 .footer{text-align:center;padding:12px;font-size:11px;color:#a0aec0}
 @media print{.section-header,.disclaimer,.btn-row,.footer,#input-section{display:none}.section-body{display:block!important}.letter-box{border:none;padding:0}}
 </style>
@@ -96,13 +97,13 @@ body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;background:#f0f4f8;color:#1a
 <div class="form-group"><label>דיווח בזמן אמת?</label><select id="timelyReport"><option value="yes">כן</option><option value="no">לא - בדיעבד</option></select></div>
 </div>
 
-<h3 style="margin:16px 0 10px;font-size:15px;color:#2c5282">ממצאי מבחנים משפטיים:</h3>
+<h3 style="margin:16px 0 10px;font-size:15px;color:#0368b0">ממצאי מבחנים משפטיים:</h3>
 <div id="tests-container"></div>
 
 
-<h3 style="margin:16px 0 10px;font-size:15px;color:#2c5282">שאלות מנחות נוספות (בל/674):</h3>
+<h3 style="margin:16px 0 10px;font-size:15px;color:#0368b0">שאלות מנחות נוספות (בל/674):</h3>
 <div class="test-section">
-<div class="test-header" onclick="this.nextElementSibling.classList.toggle('open')">שאלון בל/674 - שאלות מנחות לבדיקת יחסי עו"מ <span style="font-size:12px;color:#718096">[לחץ לפתיחה]</span></div>
+<div class="test-header" onclick="this.nextElementSibling.classList.toggle('open')">שאלון בל/674 - שאלות מנחות לבדיקת יחסי עו"מ <span style="font-size:12px;color:#737382">[לחץ לפתיחה]</span></div>
 <div class="test-body">
 <div class="sub-q"><label>האם קיים חוזה העסקה?</label><select id="q674-contract"><option value="">לא נבדק</option><option value="yes">כן</option><option value="no">לא</option></select></div>
 <div class="sub-q"><label>האם דוחות נוכחות כוללים שעות שונות ומשתנות או קבועות/מלאכותיות?</label><select id="q674-attendance"><option value="">לא נבדק</option><option value="varied">שונות ומשתנות (מחזק)</option><option value="fixed">קבועות/מלאכותיות (מחשיד)</option></select></div>
@@ -839,7 +840,7 @@ function onCaseTypeChange() {
 
     container.innerHTML += `
       <div class="test-section">
-        <div class="test-header" onclick="this.nextElementSibling.classList.toggle('open')">${test.name} <span style="font-size:12px;color:#718096">[${test.weight === 'primary' ? 'מרכזי' : test.weight === 'owner' ? 'בעלי שליטה' : 'משלים'}]</span></div>
+        <div class="test-header" onclick="this.nextElementSibling.classList.toggle('open')">${test.name} <span style="font-size:12px;color:#737382">[${test.weight === 'primary' ? 'מרכזי' : test.weight === 'owner' ? 'בעלי שליטה' : 'משלים'}]</span></div>
         <div class="test-body">${questionsHtml}</div>
       </div>`;
   });
@@ -915,8 +916,8 @@ function renderResults(screening, testScore, rec, precedents, letter) {
   });
   if (q674p + q674n > 0) {
     const pct = Math.round(q674p / (q674p + q674n) * 100);
-    const color = pct >= 60 ? '#276749' : pct <= 40 ? '#c53030' : '#975a16';
-    const bg = pct >= 60 ? '#c6f6d5' : pct <= 40 ? '#fed7d7' : '#fefcbf';
+    const color = pct >= 60 ? '#367C39' : pct <= 40 ? '#c93435' : '#BD4200';
+    const bg = pct >= 60 ? '#EAF7E3' : pct <= 40 ? '#ffefef' : '#FFF3E0';
     q674Html = '<div style="margin-top:12px;padding:10px;border-radius:8px;background:' + bg + ';border:1px solid ' + color + '"><strong style="color:' + color + '">שאלון בל/674: ' + q674p + ' חיוביים, ' + q674n + ' שליליים (' + pct + '% חיובי)</strong></div>';
   }
   reasonHtml += q674Html;
