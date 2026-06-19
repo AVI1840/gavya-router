@@ -2,65 +2,66 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&family=Assistant:wght@400;600;700&display=swap" rel="stylesheet">
 <title>מנתב הגבייה - מצגת</title>
 <style>
 @page { size: landscape; margin: 0; }
 @media print { .slide { page-break-after: always; } }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #1a1a2e; }
+body { font-family: 'Rubik', 'Assistant', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; }
 .slide { width: 100vw; height: 100vh; padding: 60px 80px; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
-.slide-light { background: #ffffff; color: #1a202c; }
-.slide-dark { background: linear-gradient(135deg, #1a365d 0%, #2d3748 100%); color: #ffffff; }
-.slide-accent { background: linear-gradient(135deg, #2c5282 0%, #1a365d 100%); color: #ffffff; }
+.slide-light { background: #ffffff; color: #0c3058; }
+.slide-dark { background: linear-gradient(135deg, #012c4a 0%, #2d3748 100%); color: #ffffff; }
+.slide-accent { background: linear-gradient(135deg, #0368b0 0%, #012c4a 100%); color: #ffffff; }
 h1 { font-size: 42px; font-weight: 700; margin-bottom: 20px; line-height: 1.2; }
-h2 { font-size: 28px; font-weight: 600; margin-bottom: 30px; color: #2c5282; }
+h2 { font-size: 28px; font-weight: 600; margin-bottom: 30px; color: #0368b0; }
 .slide-dark h2, .slide-accent h2 { color: #90cdf4; }
 .subtitle { font-size: 20px; opacity: 0.8; margin-top: 12px; }
 .num-row { display: flex; gap: 24px; margin: 30px 0; }
-.num-box { flex: 1; text-align: center; padding: 24px 16px; border-radius: 12px; background: rgba(44,82,130,0.08); border: 1px solid rgba(44,82,130,0.15); }
+.num-box { flex: 1; text-align: center; padding: 24px 16px; border-radius: 8px; background: rgba(44,82,130,0.08); border: 1px solid rgba(44,82,130,0.15); }
 .slide-dark .num-box { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
-.num-box .num { font-size: 56px; font-weight: 800; color: #2c5282; display: block; line-height: 1; }
-.slide-dark .num-box .num { color: #63b3ed; }
+.num-box .num { font-size: 56px; font-weight: 800; color: #0368b0; display: block; line-height: 1; }
+.slide-dark .num-box .num { color: #0068f5; }
 .num-box .lbl { font-size: 14px; margin-top: 8px; opacity: 0.7; }
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin: 20px 0; }
-.card { background: #f7fafc; border-radius: 10px; padding: 20px 24px; border-right: 4px solid #2c5282; }
-.card h3 { font-size: 15px; color: #2c5282; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+.card { background: #F0F8FF; border-radius: 10px; padding: 20px 24px; border-right: 4px solid #0368b0; }
+.card h3 { font-size: 15px; color: #0368b0; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
 .card ul { margin-right: 16px; font-size: 15px; line-height: 1.8; }
-.card-red { border-right-color: #c53030; background: #fff5f5; }
-.card-red h3 { color: #c53030; }
-.quote { font-style: italic; font-size: 16px; padding: 16px 20px; border-right: 4px solid #a0aec0; margin: 12px 0; background: #f7fafc; border-radius: 0 8px 8px 0; color: #4a5568; }
-.quote cite { display: block; font-style: normal; font-size: 12px; margin-top: 6px; color: #718096; }
+.card-red { border-right-color: #c93435; background: #ffefef; }
+.card-red h3 { color: #c93435; }
+.quote { font-style: italic; font-size: 16px; padding: 16px 20px; border-right: 4px solid #a0aec0; margin: 12px 0; background: #F0F8FF; border-radius: 0 8px 8px 0; color: #266794; }
+.quote cite { display: block; font-style: normal; font-size: 12px; margin-top: 6px; color: #737382; }
 table { width: 100%; border-collapse: collapse; font-size: 15px; margin: 16px 0; }
-th { background: #1a365d; color: white; padding: 10px 14px; text-align: right; }
-td { padding: 10px 14px; border-bottom: 1px solid #e2e8f0; }
-tr:nth-child(even) { background: #f7fafc; }
-tr.hl { background: #ebf8ff; font-weight: 600; }
-.tag { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; }
-.t-fp { background: #bee3f8; color: #1a365d; }
-.t-ss { background: #c6f6d5; color: #22543d; }
+th { background: #012c4a; color: white; padding: 10px 14px; text-align: right; }
+td { padding: 10px 14px; border-bottom: 1px solid #b5c7e2; }
+tr:nth-child(even) { background: #F0F8FF; }
+tr.hl { background: #e8f3ff; font-weight: 600; }
+.tag { display: inline-block; padding: 3px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; }
+.t-fp { background: #bee3f8; color: #012c4a; }
+.t-ss { background: #EAF7E3; color: #22543d; }
 .t-en { background: #e9d8fd; color: #44337a; }
 .flow { text-align: center; margin: 20px 0; font-size: 15px; }
-.flow-step { display: inline-block; padding: 10px 18px; border-radius: 8px; background: #ebf8ff; border: 1px solid #bee3f8; margin: 4px; }
-.flow-arrow { display: inline-block; margin: 0 4px; color: #2c5282; font-size: 20px; }
-.flow-result { display: inline-block; padding: 12px 24px; border-radius: 8px; background: #fefcbf; border: 2px solid #d69e2e; font-weight: 700; margin-top: 12px; }
+.flow-step { display: inline-block; padding: 10px 18px; border-radius: 8px; background: #e8f3ff; border: 1px solid #bee3f8; margin: 4px; }
+.flow-arrow { display: inline-block; margin: 0 4px; color: #0368b0; font-size: 20px; }
+.flow-result { display: inline-block; padding: 12px 24px; border-radius: 8px; background: #FFF3E0; border: 2px solid #d69e2e; font-weight: 700; margin-top: 12px; }
 .timeline { display: flex; gap: 0; margin: 20px 0; }
-.tl-item { flex: 1; text-align: center; padding: 16px 12px; background: #f7fafc; border-left: 1px solid #e2e8f0; position: relative; }
+.tl-item { flex: 1; text-align: center; padding: 16px 12px; background: #F0F8FF; border-left: 1px solid #b5c7e2; position: relative; }
 .tl-item:first-child { border-radius: 0 8px 8px 0; }
 .tl-item:last-child { border-radius: 8px 0 0 8px; border-left: none; }
-.tl-item .week { font-size: 12px; color: #718096; margin-bottom: 6px; }
-.tl-item .act { font-size: 14px; font-weight: 600; color: #1a365d; }
-.tl-item.active { background: #2c5282; }
+.tl-item .week { font-size: 12px; color: #737382; margin-bottom: 6px; }
+.tl-item .act { font-size: 14px; font-weight: 600; color: #012c4a; }
+.tl-item.active { background: #0368b0; }
 .tl-item.active .week, .tl-item.active .act { color: white; }
 .action-list { list-style: none; font-size: 20px; line-height: 2.2; }
-.action-list li { padding: 8px 0; border-bottom: 1px solid #edf2f7; }
+.action-list li { padding: 8px 0; border-bottom: 1px solid #e8f3ff; }
 .action-list .icon { font-size: 24px; margin-left: 12px; }
-.banner { position: absolute; bottom: 0; left: 0; right: 0; background: #1a365d; color: white; text-align: center; padding: 16px; font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
+.banner { position: absolute; bottom: 0; left: 0; right: 0; background: #012c4a; color: white; text-align: center; padding: 16px; font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
 .slide-dark .banner { background: rgba(255,255,255,0.1); }
 .badge-row { display: flex; gap: 16px; justify-content: center; margin: 16px 0; }
 .badge { padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; }
-.b-green { background: #c6f6d5; color: #22543d; }
-.b-blue { background: #bee3f8; color: #1a365d; }
-.b-gray { background: #edf2f7; color: #4a5568; }
+.b-green { background: #EAF7E3; color: #22543d; }
+.b-blue { background: #bee3f8; color: #012c4a; }
+.b-gray { background: #e8f3ff; color: #266794; }
 .footer { position: absolute; bottom: 16px; left: 80px; right: 80px; font-size: 11px; opacity: 0.4; display: flex; justify-content: space-between; }
 .cols3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin: 20px 0; }
 .col-card { padding: 20px; border-radius: 10px; text-align: center; }
@@ -82,7 +83,7 @@ tr.hl { background: #ebf8ff; font-weight: 600; }
 
 <!-- SLIDE 2: BLUF -->
 <div class="slide slide-light">
-    <h2 style="color:#1a365d">מה עשינו ומה מציעים</h2>
+    <h2 style="color:#012c4a">מה עשינו ומה מציעים</h2>
     <div class="num-row">
         <div class="num-box"><span class="num">10</span><span class="lbl">חוזרים נותחו לעומק</span></div>
         <div class="num-box"><span class="num">7</span><span class="lbl">הזדמנויות ייעול</span></div>
@@ -95,7 +96,7 @@ tr.hl { background: #ebf8ff; font-weight: 600; }
 
 <!-- SLIDE 3: PROBLEM -->
 <div class="slide slide-light">
-    <h2 style="color:#1a365d">הלוגיקה קיימת. הנגשתה — לא.</h2>
+    <h2 style="color:#012c4a">הלוגיקה קיימת. הנגשתה — לא.</h2>
     <div class="grid2">
         <div>
             <div class="num-row" style="flex-wrap:wrap;gap:12px">
@@ -115,35 +116,35 @@ tr.hl { background: #ebf8ff; font-weight: 600; }
 
 <!-- SLIDE 4: RISKS -->
 <div class="slide slide-light">
-    <h2 style="color:#c53030">טעויות שהכלי מונע</h2>
+    <h2 style="color:#c93435">טעויות שהכלי מונע</h2>
     <div class="cols3">
         <div class="card card-red">
             <h3>נימוק 3 + בעל שליטה</h3>
             <p style="font-size:14px;line-height:1.6">"מעמדו של בעל השליטה זהה לזה של העצמאי מבחינת זכאות לגמלה. <strong>אין לשנות את המעמד.</strong>"</p>
-            <p style="font-size:11px;color:#718096;margin-top:8px">חוזר 1406, עמ' 4</p>
+            <p style="font-size:11px;color:#737382;margin-top:8px">חוזר 1406, עמ' 4</p>
         </div>
         <div class="card card-red">
             <h3>בני זוג באבטלה</h3>
             <p style="font-size:14px;line-height:1.6">"חלה <strong>חובה</strong> להעביר את התיק לחקירות חוץ ללא הגבלה של תקופת דיווח העסקה"</p>
-            <p style="font-size:11px;color:#718096;margin-top:8px">ועדת סינון 2018</p>
+            <p style="font-size:11px;color:#737382;margin-top:8px">ועדת סינון 2018</p>
         </div>
         <div class="card card-red">
             <h3>ביטול מקור 126</h3>
             <p style="font-size:14px;line-height:1.6">"פעולת הביטול מוחקת את העיסוקים <strong>עבור כל שנת המס</strong>, גם אם נרשמה תקופה הקטנה משנה"</p>
-            <p style="font-size:11px;color:#718096;margin-top:8px">חוזר 1406, עמ' 6-7</p>
+            <p style="font-size:11px;color:#737382;margin-top:8px">חוזר 1406, עמ' 6-7</p>
         </div>
     </div>
 </div>
 
 <!-- SLIDE 5: SOLUTION -->
 <div class="slide slide-light">
-    <h2 style="color:#1a365d">מנתב הגבייה — שואל, מנתב, חוסם</h2>
+    <h2 style="color:#012c4a">מנתב הגבייה — שואל, מנתב, חוסם</h2>
     <table>
         <tr><th style="width:25%">שואל</th><th style="width:40%">מנתב</th><th>חוסם</th></tr>
-        <tr><td>סוג גמלה?</td><td>"טופס 674 + ועדת סינון"</td><td style="color:#c53030">נימוק 3 + בעל שליטה</td></tr>
-        <tr><td>קרבה משפחתית?</td><td>"פקיד תביעות מאשר"</td><td style="color:#c53030">בני זוג + אבטלה</td></tr>
-        <tr><td>תקופת עבודה?</td><td>"חקירת חוץ"</td><td style="color:#c53030">פגיעה בעבודה + משק בית</td></tr>
-        <tr><td>גובה שכר?</td><td>"מסך 614 → קבמע → נימוק 1"</td><td style="color:#c53030">ביטול שנת מס שלמה</td></tr>
+        <tr><td>סוג גמלה?</td><td>"טופס 674 + ועדת סינון"</td><td style="color:#c93435">נימוק 3 + בעל שליטה</td></tr>
+        <tr><td>קרבה משפחתית?</td><td>"פקיד תביעות מאשר"</td><td style="color:#c93435">בני זוג + אבטלה</td></tr>
+        <tr><td>תקופת עבודה?</td><td>"חקירת חוץ"</td><td style="color:#c93435">פגיעה בעבודה + משק בית</td></tr>
+        <tr><td>גובה שכר?</td><td>"מסך 614 → קבמע → נימוק 1"</td><td style="color:#c93435">ביטול שנת מס שלמה</td></tr>
     </table>
     <div class="badge-row">
         <span class="badge b-green">לא AI</span>
@@ -155,7 +156,7 @@ tr.hl { background: #ebf8ff; font-weight: 600; }
 
 <!-- SLIDE 6: LIVE DEMO -->
 <div class="slide slide-light">
-    <h2 style="color:#1a365d">נסו בעצמכם — דמו מצורף</h2>
+    <h2 style="color:#012c4a">נסו בעצמכם — דמו מצורף</h2>
     <div class="flow">
         <span class="flow-step">פקיד בוחר: דמי לידה</span>
         <span class="flow-arrow">←</span>
@@ -168,12 +169,12 @@ tr.hl { background: #ebf8ff; font-weight: 600; }
     <div style="text-align:center">
         <div class="flow-result">⚠️ תוצאה: טופס בל/674 + ועדת סינון | מקור: ועדת סינון 2018</div>
     </div>
-    <p style="text-align:center;margin-top:30px;font-size:16px;color:#4a5568">מצורף קובץ HTML — פתחו בדפדפן Chrome ונסו 6 תרחישים</p>
+    <p style="text-align:center;margin-top:30px;font-size:16px;color:#266794">מצורף קובץ HTML — פתחו בדפדפן Chrome ונסו 6 תרחישים</p>
 </div>
 
 <!-- SLIDE 7: OPPORTUNITIES -->
 <div class="slide slide-light">
-    <h2 style="color:#1a365d">7 הזדמנויות — 3 מסלולים</h2>
+    <h2 style="color:#012c4a">7 הזדמנויות — 3 מסלולים</h2>
     <table>
         <tr><th>#</th><th>הזדמנות</th><th>מקור</th><th>מסלול</th></tr>
         <tr class="hl"><td><strong>1</strong></td><td><strong>מנתב ועדת סינון</strong></td><td>ועדת סינון 2018</td><td><span class="tag t-fp">Fast Pilot</span></td></tr>
@@ -211,7 +212,7 @@ tr.hl { background: #ebf8ff; font-weight: 600; }
 
 <!-- SLIDE 9: TIMELINE -->
 <div class="slide slide-light">
-    <h2 style="color:#1a365d">5 שבועות לתוצאות</h2>
+    <h2 style="color:#012c4a">5 שבועות לתוצאות</h2>
     <div class="timeline">
         <div class="tl-item"><div class="week">שבוע 1</div><div class="act">תיקוף לוגיקה<br>עם נציגה</div></div>
         <div class="tl-item"><div class="week">שבוע 2</div><div class="act">בניית מנתב<br>ועדת סינון</div></div>
