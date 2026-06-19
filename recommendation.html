@@ -64,7 +64,15 @@ body{font-family:'Rubik','Assistant',-apple-system,BlinkMacSystemFont,'Segoe UI'
 .outcome-recognized{background:#EAF7E3;color:#367C39}
 .outcome-not{background:#ffefef;color:#c93435}
 .footer{text-align:center;padding:12px;font-size:11px;color:#a0aec0}
-@media print{.section-header,.disclaimer,.btn-row,.footer,#input-section{display:none}.section-body{display:block!important}.letter-box{border:none;padding:0}}
+@media print{
+.section-header,.disclaimer,.btn-row,.footer,#input-section,#missing-panel,#precedents-section{display:none}
+.section-body{display:block!important}
+.section{box-shadow:none;border:none}
+.letter-box{border:none;padding:0;font-size:13pt;line-height:1.8}
+.result-panel{border:1px solid #ccc;box-shadow:none}
+body{background:white;padding:0}
+.container{max-width:100%}
+}
 </style>
 </head>
 <body>
@@ -80,6 +88,17 @@ body{font-family:'Rubik','Assistant',-apple-system,BlinkMacSystemFont,'Segoe UI'
 <div class="section" id="input-section">
 <div class="section-header" onclick="toggleSection('input')"><h2>הזנת פרטי מקרה</h2><span class="toggle" id="toggle-input">▼</span></div>
 <div class="section-body open" id="body-input">
+
+<div style="margin-bottom:12px;padding:10px;background:var(--color-bg-info,#e8f3ff);border-radius:8px;border:1px solid var(--color-border-primary,#b5c7e2)">
+<strong style="font-size:13px;color:var(--color-primary-500,#0368b0)">תרחישים לדוגמה (למידה):</strong>
+<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">
+<button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="loadExample('spouse-maternity')">בת זוג + אימהות</button>
+<button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="loadExample('family-unemployment')">אח + אבטלה</button>
+<button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="loadExample('owner-maternity')">בעלת שליטה + לידה</button>
+<button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="loadExample('athlete-injury')">ספורטאי + פגיעה</button>
+<button class="btn btn-secondary" style="font-size:11px;padding:4px 10px" onclick="loadExample('spouse-block')">בנ"ז + אבטלה (חסימה)</button>
+</div>
+</div>
 <div class="form-row">
 <div class="form-group"><label>סוג מקרה:</label><select id="caseType" onchange="onCaseTypeChange()"><option value="">בחר...</option><option value="family-employment">העסקת קרוב משפחה</option><option value="spouse-employment">העסקת בן/בת זוג</option><option value="controlling-owners">בעל/ת שליטה</option><option value="household-workers">עובד/ת משק בית</option><option value="athletes">ספורטאי/ת</option><option value="foreign-workers">עובד/ת זר/ה / תושב שטחים</option><option value="no-employer-identity">ללא זהות מעסיק</option></select></div>
 <div class="form-group"><label>סוג קרבה:</label><select id="relation"><option value="none">אין קרבה</option><option value="spouse">בן/בת זוג</option><option value="parent-child">הורה-ילד</option><option value="siblings">אח/ות</option><option value="cousins">בני דודים</option><option value="in-laws">חותן/חמות/גיס</option><option value="owner">בעל/ת שליטה</option></select></div>
@@ -118,10 +137,18 @@ body{font-family:'Rubik','Assistant',-apple-system,BlinkMacSystemFont,'Segoe UI'
 </div>
 
 <div class="btn-row">
-<button class="btn btn-primary" onclick="runAnalysis()">נתח מקרה והפק המלצה</button>
+<button class="btn btn-primary" onclick="runAnalysisWithValidation()">נתח מקרה והפק המלצה</button>
 <button class="btn btn-secondary" onclick="resetAll()">נקה הכל</button>
+<button class="btn btn-secondary" onclick="saveCase()" style="font-size:12px">💾 שמור</button>
+<button class="btn btn-secondary" onclick="loadSavedCase()" style="font-size:12px">📂 טען שמור</button>
 </div>
 </div>
+</div>
+
+
+<div id="missing-panel" style="display:none;margin-top:12px;padding:12px;background:#FFF3E0;border:1px solid #f59e0b;border-radius:8px">
+<strong style="color:#BD4200;font-size:13px">⚠️ שדות חסרים (משפיעים על רמת הביטחון):</strong>
+<ul id="missing-list" style="margin:6px 16px 0;font-size:12px;color:#BD4200"></ul>
 </div>
 
 <!-- RESULTS SECTION -->
@@ -154,7 +181,7 @@ body{font-family:'Rubik','Assistant',-apple-system,BlinkMacSystemFont,'Segoe UI'
 </div>
 </div>
 
-<div class="footer">מערכת המלצה לקביעת מעמד v1.0 | Scale4U Pilot | צוות חדשנות ותשתית | יוני 2026<br><strong>המערכת ממליצה — הפקיד/ה מחליט/ה</strong></div>
+<div class="footer">מערכת המלצה לקביעת מעמד v2.0 | 31 תקדימים | 5 גמלאות | שאלון 674 | Scale4U Pilot | צוות חדשנות ותשתית | יוני 2026<br><strong>המערכת ממליצה — הפקיד/ה מחליט/ה</strong></div>
 </div>
 
 <script>
@@ -963,6 +990,150 @@ function resetAll() {
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('body-input').classList.add('open');
 });
+
+
+// ===== VALIDATION WRAPPER =====
+function runAnalysisWithValidation() {
+  const caseType = document.getElementById('caseType').value;
+  if (!caseType) {
+    alert('יש לבחור סוג מקרה לפני ניתוח');
+    return;
+  }
+  checkMissing();
+  runAnalysis();
+}
+
+// ===== EXAMPLE SCENARIOS =====
+function loadExample(scenario) {
+  resetAll();
+  const examples = {
+    'spouse-maternity': {
+      caseType: 'spouse-employment', relation: 'spouse', period: '24', salary: '8000',
+      salaryRaise: '35', benefitType: 'maternity', repeatClaim: 'no', timelyReport: 'yes',
+      description: 'בת זוג עובדת בעסק בעלה 24 חודשים, שכר עלה 35% לפני לידה'
+    },
+    'family-unemployment': {
+      caseType: 'family-employment', relation: 'siblings', period: '8', salary: '5300',
+      salaryRaise: '0', benefitType: 'unemployment', repeatClaim: 'no', timelyReport: 'yes',
+      description: 'אח עובד בעסק אחותו 8 חודשים בשכר מינימום, תובע אבטלה'
+    },
+    'owner-maternity': {
+      caseType: 'controlling-owners', relation: 'owner', period: '36', salary: '15000',
+      salaryRaise: '0', benefitType: 'maternity', repeatClaim: 'no', timelyReport: 'yes',
+      description: 'בעלת שליטה יחידה בחברה, 36 חודשים, שכר 15,000, תובעת לידה'
+    },
+    'athlete-injury': {
+      caseType: 'athletes', relation: 'none', period: '10', salary: '3000',
+      salaryRaise: '0', benefitType: 'work-injury', repeatClaim: 'no', timelyReport: 'yes',
+      description: 'שחקן כדורגל, נפגע בעונה, שכר 3,000 ברוטו'
+    },
+    'spouse-block': {
+      caseType: 'spouse-employment', relation: 'spouse', period: '18', salary: '7000',
+      salaryRaise: '0', benefitType: 'unemployment', repeatClaim: 'no', timelyReport: 'yes',
+      description: 'בן זוג עובד בעסק אשתו, תובע אבטלה → חסימה: חקירת חוץ חובה!'
+    }
+  };
+
+  const ex = examples[scenario];
+  if (!ex) return;
+
+  document.getElementById('caseType').value = ex.caseType;
+  document.getElementById('relation').value = ex.relation;
+  document.getElementById('period').value = ex.period;
+  document.getElementById('salary').value = ex.salary;
+  document.getElementById('salaryRaise').value = ex.salaryRaise;
+  document.getElementById('benefitType').value = ex.benefitType;
+  document.getElementById('repeatClaim').value = ex.repeatClaim;
+  document.getElementById('timelyReport').value = ex.timelyReport;
+  onCaseTypeChange();
+
+  alert('תרחיש נטען: ' + ex.description + '\n\nלחץ \"נתח מקרה\" לראות את התוצאה.');
+}
+
+// ===== VALIDATION + MISSING FIELDS =====
+function checkMissing() {
+  const missing = [];
+  const caseType = document.getElementById('caseType').value;
+  const period = document.getElementById('period').value;
+  const salary = document.getElementById('salary').value;
+  const benefit = document.getElementById('benefitType').value;
+
+  if (!caseType) missing.push('סוג מקרה (חובה)');
+  if (!period) missing.push('תקופת עבודה');
+  if (!salary) missing.push('שכר חודשי');
+  if (!benefit) missing.push('סוג גמלה');
+
+  // Check legal tests
+  const applicableTests = CASE_TYPE_TESTS[caseType] || [];
+  let testsAnswered = 0, testsTotal = 0;
+  applicableTests.forEach(testId => {
+    const test = LEGAL_TESTS.find(t => t.id === testId);
+    if (!test) return;
+    test.questions.forEach(q => {
+      testsTotal++;
+      const el = document.getElementById('answer-' + q.id);
+      if (el && el.value) testsAnswered++;
+    });
+  });
+  if (testsTotal > 0 && testsAnswered === 0) missing.push('ממצאי מבחנים משפטיים (אף אחד לא מולא - ההמלצה תהיה חלקית)');
+  else if (testsTotal > 0 && testsAnswered < testsTotal * 0.5) missing.push('רוב המבחנים לא מולאו (' + testsAnswered + '/' + testsTotal + ')');
+
+  // Check 674
+  let q674filled = 0;
+  ['q674-contract','q674-attendance','q674-payslips','q674-severance','q674-replacement','q674-salary-match','q674-bank','q674-witnesses','q674-predecessor'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.value) q674filled++;
+  });
+  if (q674filled === 0) missing.push('שאלון בל/674 (לא מולא - ניתן להמשיך אך הדיוק ייפגע)');
+
+  // Show/hide panel
+  const panel = document.getElementById('missing-panel');
+  const list = document.getElementById('missing-list');
+  if (panel && list) {
+    if (missing.length > 0) {
+      panel.style.display = 'block';
+      list.innerHTML = missing.map(m => '<li>' + m + '</li>').join('');
+    } else {
+      panel.style.display = 'none';
+    }
+  }
+
+  return missing;
+}
+
+// ===== SAVE/LOAD CASE =====
+function saveCase() {
+  const data = {
+    caseType: document.getElementById('caseType').value,
+    relation: document.getElementById('relation').value,
+    period: document.getElementById('period').value,
+    salary: document.getElementById('salary').value,
+    salaryRaise: document.getElementById('salaryRaise').value,
+    benefitType: document.getElementById('benefitType').value,
+    repeatClaim: document.getElementById('repeatClaim').value,
+    timelyReport: document.getElementById('timelyReport').value,
+    savedAt: new Date().toLocaleString('he-IL')
+  };
+  localStorage.setItem('gavya-saved-case', JSON.stringify(data));
+  alert('המקרה נשמר. ניתן לחזור אליו בפתיחה הבאה.');
+}
+
+function loadSavedCase() {
+  const saved = localStorage.getItem('gavya-saved-case');
+  if (!saved) { alert('אין מקרה שמור'); return; }
+  const data = JSON.parse(saved);
+  document.getElementById('caseType').value = data.caseType || '';
+  document.getElementById('relation').value = data.relation || 'none';
+  document.getElementById('period').value = data.period || '';
+  document.getElementById('salary').value = data.salary || '';
+  document.getElementById('salaryRaise').value = data.salaryRaise || '';
+  document.getElementById('benefitType').value = data.benefitType || '';
+  document.getElementById('repeatClaim').value = data.repeatClaim || 'no';
+  document.getElementById('timelyReport').value = data.timelyReport || 'yes';
+  onCaseTypeChange();
+  alert('מקרה נטען (נשמר ב-' + data.savedAt + ')');
+}
+
 </script>
 </body>
 </html>
